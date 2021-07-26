@@ -5,6 +5,7 @@ pkgver=1.$(date +"%Y.%m.%d")
 pkgrel=0
 arch=('any')
 license=('GPL')
+depends=('bash')
 makedepends=('git')
 url="https://gitlab.com/biglinux/biglinux-improve-compatibility"
 pkgdesc="Compatibility improvements to make it easier to use packages compiled through the AUR"
