@@ -1,0 +1,12 @@
+#!/bin/bash
+
+cd /usr/src
+
+for i  in  linux-headers-*; do
+
+    kernelrm=$(echo "$i" | sed 's|linux-headers-||g')
+    rm "/usr/src/linux-headers-$kernelrm" 2> /dev/null
+    rm "/usr/lib/modules/$kernelrm/build/version" 2> /dev/null
+
+done
+

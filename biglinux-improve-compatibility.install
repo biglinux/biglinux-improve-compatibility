@@ -1,0 +1,8 @@
+post_install() {
+    systemctl enable biglinux-improve-compatibility
+    systemctl start biglinux-improve-compatibility
+}
+
+pre_remove() {
+    systemctl disable biglinux-improve-compatibility
+} 
