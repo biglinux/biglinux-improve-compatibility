@@ -13,7 +13,7 @@ md5sums=(SKIP)
 install=biglinux-improve-compatibility.install
 
 package() {
-	cp -R "${srcdir}/biglinux-improve-compatibility/src/usr" "${pkgdir}/usr/usr"
+	cp -R "${srcdir}/biglinux-improve-compatibility/biglinux-improve-compatibility/usr" "${pkgdir}/usr"
 }
 
 
