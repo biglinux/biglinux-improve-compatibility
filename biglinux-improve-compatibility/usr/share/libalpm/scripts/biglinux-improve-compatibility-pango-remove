@@ -1,0 +1,11 @@
+#!/bin/bash
+
+for i in $(ls /usr/lib/libpangoxft-*)
+do
+    new_link="$(echo "$i" | sed 's|libpangoxft|libpangox|g')"
+
+    if [ -L "$new_link" ]; then
+        rm "$new_link"
+    fi
+
+done
