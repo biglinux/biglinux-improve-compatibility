@@ -7,4 +7,4 @@ Target = pcsclite
 [Action]
 Description = Auto enable pcsclite after install
 When = PostTransaction
-Exec = systemctl --now enable pcscd
+Exec = /bin/sh -c 'systemctl --now enable pcscd'
