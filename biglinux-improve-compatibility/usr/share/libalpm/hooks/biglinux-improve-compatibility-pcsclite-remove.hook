@@ -5,6 +5,6 @@ Target = pcsclite
 
 [Action]
 Description = Auto disable pcsclite after install
-When = PostTransaction
+When = PreTransaction
 Exec = /bin/sh -c 'systemctl disable pcscd'
 
