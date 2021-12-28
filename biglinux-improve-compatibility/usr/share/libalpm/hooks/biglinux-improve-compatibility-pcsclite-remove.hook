@@ -1,0 +1,10 @@
+[Trigger]
+Type = Package
+Operation = Remove
+Target = pcsclite
+
+[Action]
+Description = Auto disable pcsclite after install
+When = PostTransaction
+Exec = systemctl disable pcscd
+
