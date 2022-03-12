@@ -1,0 +1,10 @@
+[Trigger]
+Type = Path
+Operation = Install
+Operation = Upgrade
+Target = usr/share/applications/virtualbox.desktop
+
+[Action]
+Description = Fix to use Virtualbox in KDE
+When = PostTransaction
+Exec = sed -i 's|Exec=VirtualBox|Exec=XDG_CURRENT_DESKTOP=gnome VirtualBox|g' /usr/share/applications/virtualbox.desktop
