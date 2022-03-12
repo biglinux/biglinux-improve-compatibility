@@ -1,0 +1,10 @@
+[Trigger]
+Type = Path
+Operation = Install
+Operation = Upgrade
+Target = etc/initcpio/hooks/miso
+
+[Action]
+Description = Fix to use Virtualbox in KDE
+When = PostTransaction
+Exec = sed -i 's|msg -n ":: Self-test requested, please wait..."|clear; msg -n ":: Verifying integrity, please wait..."|g;s|msg "done. Checksum is OK, continue booting."|msg "done. Checksum is OK, continue booting."; sleep 1; msg "Checksum is OK"; sleep 1; msg "Checksum is OK"; sleep 1; msg "Checksum is OK"|g;s|echo "ERROR: one or more files are corrupted"|echo "ERROR: one or more files are corrupted"; echo "Re-download the .iso file"; echo ""; echo "Re-download the .iso file"; echo ""; echo "Re-download the .iso file"|g' /etc/initcpio/hooks/miso
