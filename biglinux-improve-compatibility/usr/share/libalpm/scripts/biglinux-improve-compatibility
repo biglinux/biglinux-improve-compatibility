@@ -18,3 +18,10 @@ done
 if [ -e "/usr/share/hplip/base/password.py" ]; then
     sed -i "s|os_name = platform.dist()\[0]|os_name = 'manjarolinux'|g" /usr/share/hplip/base/password.py
 fi
+
+if [ -e "/usr/lib/libicuio.so" ]; then
+    ln -s /usr/lib/libicuio.so /usr/lib/libicuio.so.suse65.1 2> /dev/null
+    ln -s /usr/lib/libicui18n.so /usr/lib/libicui18n.so.suse65.1 2> /dev/null
+    ln -s /usr/lib/libicuuc.so /usr/lib/libicuuc.so.suse65.1 2> /dev/null
+    ln -s /usr/lib/libicudata.so /usr/lib/libicudata.so.suse65.1 2> /dev/null
+fi
