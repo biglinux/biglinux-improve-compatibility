@@ -7,4 +7,4 @@ Target = usr/share/applications/virtualbox.desktop
 [Action]
 Description = Fix to use Virtualbox in KDE
 When = PostTransaction
-Exec = /bin/sh -c 'sed -i "s|Exec=VirtualBox %U|Exec=XDG_CURRENT_DESKTOP=gnome VirtualBox %U|g" /usr/share/applications/virtualbox.desktop'
+Exec = /bin/sh -c 'sed -i "s|Exec=VirtualBox %U|Exec=XDG_CURRENT_DESKTOP=gnome VirtualBox %U|g" /usr/share/applications/virtualbox.desktop; modprobe vboxdrv'
