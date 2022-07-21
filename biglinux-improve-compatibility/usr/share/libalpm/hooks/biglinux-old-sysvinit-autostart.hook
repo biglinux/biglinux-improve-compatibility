@@ -1,0 +1,10 @@
+[Trigger]
+Type = Path
+Operation = Install
+Operation = Upgrade
+Target = etc/init.d/*
+
+[Action]
+Description = Autostart if install old package
+When = PostTransaction
+Exec = /usr/bin/biglinux-improve-compatibility
