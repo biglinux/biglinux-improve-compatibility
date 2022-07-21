@@ -1,6 +1,6 @@
 [Unit]
 Description=Run Script to improve compatibility
-After=display-manager.service network.target network-online.target
+After=display-manager.service network.target
 DefaultDependencies=no
 
 [Service]
