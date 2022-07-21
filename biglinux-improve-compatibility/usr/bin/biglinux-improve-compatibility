@@ -2,7 +2,12 @@
 
 ln -sf "/usr/lib/modules/$(uname -r)/build" /usr/src/linux
 
-for i  in  /etc/init.d/*; do
-    $i start
-done
+# if folder not empty
+if [ ! -z "$(ls -A -- /etc/init.d)" ]; then
 
+    #run loop
+    for i  in /etc/init.d/*; do
+        $i start
+    done
+
+fi
