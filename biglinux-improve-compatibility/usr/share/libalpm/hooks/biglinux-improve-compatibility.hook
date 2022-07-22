@@ -5,6 +5,7 @@ Operation = Upgrade
 Target = linux*
 Target = biglinux-improve-compatibility
 Target = hplip
+Target = wxwidgets-gtk3
 
 [Action]
 Description = Compatibility improvements to make it easier to use packages compiled through the AUR
