@@ -16,7 +16,7 @@ for i  in  $(ls /usr/lib/modules | grep -v extramodules); do
 done
 
 if [ -e "/usr/share/hplip/base/password.py" ]; then
-    sed -i "s|os_name = platform.dist()\[0]|os_name = 'manjarolinux'|g" /usr/share/hplip/base/password.py
+    sed -i "s|os_name = platform.dist()\[0]|os_name = 'manjarolinux'|g" /usr/share/hplip/base/password.py 2> /dev/null
 fi
 
 if [ -e "/usr/lib/libicuio.so" ]; then

@@ -5,7 +5,7 @@ do
     new_link="$(echo "$i" | sed 's|libpangoxft|libpangox|g')"
 
     if [ ! -e "$new_link" ]; then
-        ln -s "$i" "$new_link"
+        ln -s "$i" "$new_link" 2> /dev/null
     fi
 
 done
