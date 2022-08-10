@@ -1,0 +1,10 @@
+[Trigger]
+Type = Package
+Operation = Install
+Operation = Upgrade
+Target = cisco-anyconnect
+
+[Action]
+Description = Auto enable cisco-anyconnect after install
+When = PostTransaction
+Exec = /bin/sh -c 'systemctl --now enable vpnagentd'

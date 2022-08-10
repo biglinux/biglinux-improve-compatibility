@@ -1,0 +1,10 @@
+[Trigger]
+Type = Package
+Operation = Remove
+Target = cisco-anyconnect
+
+[Action]
+Description = Auto disable cisco-anyconnect after install
+When = PreTransaction
+Exec = /bin/sh -c 'systemctl disable vpnagentd'
+
