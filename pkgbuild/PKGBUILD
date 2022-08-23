@@ -1,0 +1,24 @@
+# Maintainer: Bruno Goncalves <bigbruno@gmail.com>
+
+pkgname=biglinux-improve-compatibility
+pkgver=$(date +%y.%m.%d)
+pkgrel=$(date +%H%M)
+arch=('any')
+license=('GPL')
+depends=('start-stop-daemon' 'wxgtk3-runtime' 'ld-lsb')
+provides=('wxwidgets3.0=3.0.5-3')
+conflicts=('wxwidgets3.0')
+replaces=('wxwidgets3.0')
+makedepends=('git')
+url="https://github.com/biglinux/biglinux-improve-compatibility"
+pkgdesc="Compatibility improvements to make it easier to use packages compiled through the AUR"
+source=("git+https://github.com/biglinux/biglinux-improve-compatibility.git")
+md5sums=(SKIP)
+install=biglinux-improve-compatibility.install
+
+package() {
+	cp -R "${srcdir}/biglinux-improve-compatibility/biglinux-improve-compatibility/usr" "${pkgdir}/usr"
+	cp -R "${srcdir}/biglinux-improve-compatibility/biglinux-improve-compatibility/lib/lsb" "${pkgdir}/usr/lib"
+	cp -R "${srcdir}/biglinux-improve-compatibility/biglinux-improve-compatibility/etc" "${pkgdir}/etc"
+	mkdir "${pkgdir}/etc/init.d"
+	}
