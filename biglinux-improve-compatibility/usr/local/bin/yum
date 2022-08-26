@@ -1,0 +1,13 @@
+#!/bin/bash
+
+#Translation
+export TEXTDOMAINDIR="/usr/share/locale"
+export TEXTDOMAIN=biglinux-improve-compatibility
+
+
+echo $"Este sistema utiliza o pamac para gerenciar os pacotes"
+echo $"Redirecionando seu comando para o comando pamac"
+echo ""
+echo ""
+
+pamac $*
