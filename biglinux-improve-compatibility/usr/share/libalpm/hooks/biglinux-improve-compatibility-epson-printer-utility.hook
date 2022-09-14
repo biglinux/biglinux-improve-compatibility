@@ -1,0 +1,10 @@
+[Trigger]
+Type = Package
+Operation = Install
+Operation = Upgrade
+Target = epson-printer-utility
+
+[Action]
+Description = Auto enable epson-printer-utility after install
+When = PostTransaction
+Exec = /bin/sh -c 'systemctl --now enable ecbd'

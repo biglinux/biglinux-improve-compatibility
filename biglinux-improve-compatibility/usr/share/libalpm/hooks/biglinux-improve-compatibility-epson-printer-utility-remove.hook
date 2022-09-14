@@ -1,0 +1,9 @@
+[Trigger]
+Type = Package
+Operation = Remove
+Target = epson-printer-utility
+
+[Action]
+Description = Auto enable epson-printer-utility after install
+When = PreTransaction
+Exec = /bin/sh -c 'systemctl disable ecbd'
