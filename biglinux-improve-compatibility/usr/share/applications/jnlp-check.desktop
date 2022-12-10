@@ -1,0 +1,11 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=JavaWS
+Comment=Java Web Start
+Exec=/usr/bin/jnlp-check
+Icon=applications-java
+Terminal=false
+Type=Application
+NoDisplay=true
+Categories=Java;Applications;
+MimeType=application/x-java-jnlp-file;
