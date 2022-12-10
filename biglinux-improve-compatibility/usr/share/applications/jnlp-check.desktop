@@ -2,7 +2,7 @@
 Encoding=UTF-8
 Name=JavaWS
 Comment=Java Web Start
-Exec=/usr/bin/jnlp-check
+Exec=/usr/bin/jnlp-check %u
 Icon=applications-java
 Terminal=false
 Type=Application
