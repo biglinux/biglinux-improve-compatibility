@@ -21,3 +21,12 @@ msgstr "Dit systeem gebruikt de pamac om de pakketten te beheren"
 
 msgid "Redirecionando seu comando para o comando pamac"
 msgstr "Uw opdracht omleiden naar de pamac-opdracht"
+
+msgid "Necessario instalar <b>jre8</b>"
+msgstr "Noodzakelijk om <b>jre8</b> te installeren"
+
+msgid "Cancelar"
+msgstr "Annuleren"
+
+msgid "Instalar"
+msgstr "Installeren"

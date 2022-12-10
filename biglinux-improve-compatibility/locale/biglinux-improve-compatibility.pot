@@ -19,3 +19,12 @@ msgstr  ""
 
 msgid   "Redirecionando seu comando para o comando pamac"
 msgstr  ""
+
+msgid   "Necessario instalar <b>jre8</b>"
+msgstr  ""
+
+msgid   "Cancelar"
+msgstr  ""
+
+msgid   "Instalar"
+msgstr  ""

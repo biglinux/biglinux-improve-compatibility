@@ -21,3 +21,12 @@ msgstr "このシステムは pamac を使用してパッケージを管理し�
 
 msgid "Redirecionando seu comando para o comando pamac"
 msgstr "コマンドを pamac コマンドにリダイレクトする"
+
+msgid "Necessario instalar <b>jre8</b>"
+msgstr "<b>jre8</b>のインストールに必要"
+
+msgid "Cancelar"
+msgstr "キャンセル"
+
+msgid "Instalar"
+msgstr "取り付ける"

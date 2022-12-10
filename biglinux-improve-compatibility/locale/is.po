@@ -21,3 +21,12 @@ msgstr "Þetta kerfi notar pamac til að stjórna pakkningunum"
 
 msgid "Redirecionando seu comando para o comando pamac"
 msgstr "Beina skipun þinni í pamac skipunina"
+
+msgid "Necessario instalar <b>jre8</b>"
+msgstr "Nauðsynlegt að setja <b>upp jre8</b>"
+
+msgid "Cancelar"
+msgstr "Afturkalla"
+
+msgid "Instalar"
+msgstr "Embætti"

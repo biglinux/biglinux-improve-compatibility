@@ -21,3 +21,12 @@ msgstr "מערכת זו משתמשת ב- pamac כדי לנהל את החבילו
 
 msgid "Redirecionando seu comando para o comando pamac"
 msgstr "ניתוב מחדש של הפקודה לפקודה pamac"
+
+msgid "Necessario instalar <b>jre8</b>"
+msgstr "יש צורך להתקין <b>jre8</b>"
+
+msgid "Cancelar"
+msgstr "ביטל"
+
+msgid "Instalar"
+msgstr "התקין"

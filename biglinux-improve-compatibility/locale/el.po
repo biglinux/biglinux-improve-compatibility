@@ -21,3 +21,12 @@ msgstr "Αυτό το σύστημα χρησιμοποιεί το pamac για 
 
 msgid "Redirecionando seu comando para o comando pamac"
 msgstr "Ανακατεύθυνση της εντολής σας στην εντολή pamac"
+
+msgid "Necessario instalar <b>jre8</b>"
+msgstr "Απαραίτητο για την εγκατάσταση <b>του jre8</b>"
+
+msgid "Cancelar"
+msgstr "Ακυρώνω"
+
+msgid "Instalar"
+msgstr "Εγκαθιστώ"

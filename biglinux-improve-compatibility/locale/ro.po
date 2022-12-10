@@ -21,3 +21,12 @@ msgstr "Acest sistem utilizează pija pentru a gestiona pachetele"
 
 msgid "Redirecionando seu comando para o comando pamac"
 msgstr "Redirecționarea comenzii către comanda pamac"
+
+msgid "Necessario instalar <b>jre8</b>"
+msgstr "Necesar pentru a instala <b>jre8</b>"
+
+msgid "Cancelar"
+msgstr "Anula"
+
+msgid "Instalar"
+msgstr "Instala"

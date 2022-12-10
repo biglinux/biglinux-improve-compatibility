@@ -21,3 +21,12 @@ msgstr "Bu sistem paketleri yönetmek için pamac'ı kullanır"
 
 msgid "Redirecionando seu comando para o comando pamac"
 msgstr "Komutunuzu pamac komutuna yönlendirme"
+
+msgid "Necessario instalar <b>jre8</b>"
+msgstr "<b>jre8'i</b> kurmak için gerekli"
+
+msgid "Cancelar"
+msgstr "İptal"
+
+msgid "Instalar"
+msgstr "Yüklemek"

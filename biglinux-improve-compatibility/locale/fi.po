@@ -21,3 +21,12 @@ msgstr "Tämä järjestelmä käyttää pamacia pakettien hallintaan"
 
 msgid "Redirecionando seu comando para o comando pamac"
 msgstr "Komennon ohjaaminen pamac-komentoon"
+
+msgid "Necessario instalar <b>jre8</b>"
+msgstr "Tarvitaan <b>jre8</b>: n asentamiseen"
+
+msgid "Cancelar"
+msgstr "Perua"
+
+msgid "Instalar"
+msgstr "Asentaa"

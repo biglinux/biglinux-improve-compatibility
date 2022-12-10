@@ -21,3 +21,12 @@ msgstr "此系统使用 pamac 来管理包"
 
 msgid "Redirecionando seu comando para o comando pamac"
 msgstr "将命令重定向到 pamac 命令"
+
+msgid "Necessario instalar <b>jre8</b>"
+msgstr "安装 <b>jre8</b> 所必需的"
+
+msgid "Cancelar"
+msgstr "取消"
+
+msgid "Instalar"
+msgstr "安装"

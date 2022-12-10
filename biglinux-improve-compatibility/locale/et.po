@@ -21,3 +21,12 @@ msgstr "See süsteem kasutab pakettide haldamiseks pamacit"
 
 msgid "Redirecionando seu comando para o comando pamac"
 msgstr "Käsu ümbersuunamine käsule pamac"
+
+msgid "Necessario instalar <b>jre8</b>"
+msgstr "Vajalik <b>jre8</b> paigaldamiseks"
+
+msgid "Cancelar"
+msgstr "Tühistama"
+
+msgid "Instalar"
+msgstr "Installida"

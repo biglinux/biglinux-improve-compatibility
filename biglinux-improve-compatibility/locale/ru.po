@@ -21,3 +21,12 @@ msgstr "Эта система использует pamac для управлен
 
 msgid "Redirecionando seu comando para o comando pamac"
 msgstr "Перенаправление команды на команду pamac"
+
+msgid "Necessario instalar <b>jre8</b>"
+msgstr "Необходимо установить <b>jre8</b>"
+
+msgid "Cancelar"
+msgstr "Отмена"
+
+msgid "Instalar"
+msgstr "Устанавливать"

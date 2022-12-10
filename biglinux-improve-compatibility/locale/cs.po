@@ -21,3 +21,12 @@ msgstr "Tento systém používá pamac ke správě balíčků"
 
 msgid "Redirecionando seu comando para o comando pamac"
 msgstr "Přesměrování příkazu na příkaz pamac"
+
+msgid "Necessario instalar <b>jre8</b>"
+msgstr "Nutné nainstalovat <b>jre8</b>"
+
+msgid "Cancelar"
+msgstr "Zrušit"
+
+msgid "Instalar"
+msgstr "Nainstalovat"

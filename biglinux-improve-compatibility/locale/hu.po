@@ -21,3 +21,12 @@ msgstr "Ez a rendszer a pamacot használja a csomagok kezeléséhez"
 
 msgid "Redirecionando seu comando para o comando pamac"
 msgstr "A parancs átirányítása a pamac parancsra"
+
+msgid "Necessario instalar <b>jre8</b>"
+msgstr "A <b>jre8</b> telepítéséhez szükséges"
+
+msgid "Cancelar"
+msgstr "Érvénytelenít"
+
+msgid "Instalar"
+msgstr "Felszerel"

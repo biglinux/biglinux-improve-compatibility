@@ -21,3 +21,12 @@ msgstr "Questo sistema utilizza il pamac per gestire i pacchetti"
 
 msgid "Redirecionando seu comando para o comando pamac"
 msgstr "Reindirizzamento del comando al comando pamac"
+
+msgid "Necessario instalar <b>jre8</b>"
+msgstr "Necessario per installare <b>jre8</b>"
+
+msgid "Cancelar"
+msgstr "Annulla"
+
+msgid "Instalar"
+msgstr "Installare"

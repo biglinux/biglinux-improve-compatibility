@@ -21,3 +21,12 @@ msgstr "Ovaj sustav koristi pamac za upravljanje paketima"
 
 msgid "Redirecionando seu comando para o comando pamac"
 msgstr "Preusmjeravanje naredbe na naredbu pamac"
+
+msgid "Necessario instalar <b>jre8</b>"
+msgstr "Potrebno za instalaciju <b>sustava jre8</b>"
+
+msgid "Cancelar"
+msgstr "Otkazati"
+
+msgid "Instalar"
+msgstr "Instalirati"
