@@ -10,3 +10,4 @@ for i  in  linux-headers-*; do
 
 done
 
+exit 0
