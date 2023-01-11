@@ -11,7 +11,22 @@ for i  in  $(ls /usr/lib/modules | grep -v extramodules 2> /dev/null); do
         if [ ! -e "/usr/lib/modules/${i}/build/version" ]; then
             ln -s "/usr/lib/modules/${i}/extramodules/version" "/usr/lib/modules/${i}/build/version" 2> /dev/null
         fi
+        
+        # Remove if link is broken
+        if [ ! -e "/lib/modules/${i}/build/version" ]; then
+            rm -f /lib/modules/${i}/build/version
+        fi
 
+        # Remove if link is broken
+        if [ ! -e "/usr/src/linux-headers-${i}" ]; then
+            rm -f /usr/src/linux-headers-${i}
+        fi
+
+        # Remove folder if empty
+        rmdir --ignore-fail-on-non-empty /lib/modules/${i}/build
+        rmdir --ignore-fail-on-non-empty /lib/modules/${i}
+
+        
     fi
 done
 
