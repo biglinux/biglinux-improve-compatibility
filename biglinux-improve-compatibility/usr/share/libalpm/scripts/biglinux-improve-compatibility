@@ -41,4 +41,10 @@ if [ -e "/usr/lib/libicuio.so" ]; then
     ln -s /usr/lib/libicudata.so /usr/lib/libicudata.so.suse65.1 2> /dev/null
 fi
 
+if [ ! -e "/usr/lib/libmpv.so.1" ]; then
+    ln -s /usr/lib/libmpv.so /usr/lib/libmpv.so.1 2> /dev/null
+fi
+
+
+
 exit 0
