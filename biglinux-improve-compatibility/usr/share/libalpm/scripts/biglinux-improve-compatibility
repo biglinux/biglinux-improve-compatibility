@@ -45,6 +45,9 @@ if [ ! -e "/usr/lib/libmpv.so.1" ]; then
     ln -s /usr/lib/libmpv.so /usr/lib/libmpv.so.1 2> /dev/null
 fi
 
+if [ ! -e "/usr/lib/libvpx.so.7" ]; then
+    ln -s /usr/lib/libvpx.so /usr/lib/libvpx.so.7 2> /dev/null
+fi
 
 
 exit 0
