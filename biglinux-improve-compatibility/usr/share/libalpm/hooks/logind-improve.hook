@@ -1,0 +1,10 @@
+[Trigger]
+Type = Package
+Operation = Install
+Operation = Upgrade
+Target = biglinux-improve-compatibility
+
+[Action]
+Description = Stop all processes when logout
+When = PostTransaction
+Exec = /bin/sh -c 'sed "s/^#*UserStopDelaySec\s*=.*/UserStopDelaySec=0/;s/^#*KillUserProcesses\s*=.*/KillUserProcesses=yes/" /etc/systemd/logind.conf'
