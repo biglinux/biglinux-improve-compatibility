@@ -1,5 +1,11 @@
 #!/bin/bash
 
+#Temporary fix to Spectacle
+if [ -e "/usr/share/applications/org.kde.spectacle.desktop" ]; then
+    sed -i 's|Exec=/usr/bin/spectacle|Exec=QMLSCENE_DEVICE=softwarecontext /usr/bin/spectacle|g' /usr/share/applications/org.kde.spectacle.desktop
+fi
+
+
 for i  in  $(ls /usr/lib/modules | grep -v extramodules 2> /dev/null); do
 
     if [ -e "/lib/modules/${i}/build" ]; then
