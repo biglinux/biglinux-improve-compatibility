@@ -5,6 +5,7 @@ Operation = Upgrade
 Target = linux*
 Target = biglinux-improve-compatibility
 Target = hplip
+Target = spectacle
 Target = wxwidgets-gtk3
 
 [Action]
