@@ -1,0 +1,11 @@
+[Trigger]
+Type = Package
+Operation = Install
+Operation = Upgrade
+Target = biglinux-improve-compatibility
+
+[Action]
+Description = Stop all processes when logout
+When = PostTransaction
+Exec = /bin/sh -c 'sed -i "s/SystemMaxUse=5M/SystemMaxUse=50M/" /etc/systemd/journald.conf'
+
