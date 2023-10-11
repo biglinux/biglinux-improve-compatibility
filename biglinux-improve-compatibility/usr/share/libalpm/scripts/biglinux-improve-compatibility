@@ -10,9 +10,6 @@ if [ -e "/usr/lib/systemd/user/plasma-plasmashell.service" ]; then
     sed -i 's|StartLimitBurst=3$|StartLimitBurst=20|g' /usr/lib/systemd/user/plasma-plasmashell.service
 fi
 
-
-
-
 for i  in  $(ls /usr/lib/modules | grep -v extramodules 2> /dev/null); do
 
     if [ -e "/lib/modules/${i}/build" ]; then
@@ -64,6 +61,10 @@ fi
 
 if [ ! -e "/usr/lib/libtiff.so.5" ]; then
     ln -s /usr/lib/libtiff.so /usr/lib/libtiff.so.5 2> /dev/null
+fi
+
+if [[ ! -e "/usr/lib/libdav1d.so.6" && -e "/usr/lib/libdav1d.so" ]]; then
+    ln -s /usr/lib/libdav1d.so /usr/lib/libdav1d.so.6 2> /dev/null
 fi
 
 exit 0
