@@ -7,6 +7,7 @@ Target = biglinux-improve-compatibility
 Target = hplip
 Target = spectacle
 Target = wxwidgets-gtk3
+Target = dav1d
 
 [Action]
 Description = Compatibility improvements to make it easier to use packages compiled through the AUR
