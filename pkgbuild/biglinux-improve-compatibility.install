@@ -1,8 +1,17 @@
 post_install() {
     systemctl enable biglinux-improve-compatibility
     systemctl start biglinux-improve-compatibility
+    if [[ ! -e /etc/sysctl.d/90-sysrq.conf ]]; then
+       echo 'kernel.sysrq = 1'  > /etc/sysctl.d/90-sysrq.conf
+    fi
 }
 
 pre_remove() {
     systemctl disable biglinux-improve-compatibility
 } 
+
+post_upgrade() {
+    if [[ ! -e /etc/sysctl.d/90-sysrq.conf ]]; then
+       echo 'kernel.sysrq = 1'  > /etc/sysctl.d/90-sysrq.conf
+    fi
+}
