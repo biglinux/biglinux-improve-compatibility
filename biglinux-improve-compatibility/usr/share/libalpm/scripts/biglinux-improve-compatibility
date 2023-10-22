@@ -67,4 +67,8 @@ if [[ ! -e "/usr/lib/libdav1d.so.6" && -e "/usr/lib/libdav1d.so" ]]; then
     ln -s /usr/lib/libdav1d.so /usr/lib/libdav1d.so.6 2> /dev/null
 fi
 
+if [[ ! -e "/usr/lib/librav1e.so.0" && -e "/usr/lib/librav1e.so" ]]; then
+    ln -s /usr/lib/librav1e.so /usr/lib/librav1e.so.0 2> /dev/null
+fi
+
 exit 0
