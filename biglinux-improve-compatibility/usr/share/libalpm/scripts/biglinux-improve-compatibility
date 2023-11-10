@@ -71,4 +71,18 @@ if [[ ! -e "/usr/lib/librav1e.so.0" && -e "/usr/lib/librav1e.so" ]]; then
     ln -s /usr/lib/librav1e.so /usr/lib/librav1e.so.0 2> /dev/null
 fi
 
+if [ ! -e "/usr/lib/libprotobuf.so.23" ]; then
+    ln -s /usr/lib/libprotobuf.so /usr/lib/libprotobuf.so.23 2> /dev/null
+fi
+
+if [ ! -e "/usr/lib/libabsl_log_internal_check_op.so.2301.0.0" ]; then
+    ln -s /usr/lib/libabsl_log_internal_check_op.so /usr/lib/libabsl_log_internal_check_op.so.2301.0.0 2> /dev/null
+fi
+
+if [ ! -e "/usr/lib/libabsl_log_internal_message.so.2301.0.0" ]; then
+    ln -s /usr/lib/libabsl_log_internal_message.so /usr/lib/libabsl_log_internal_message.so.2301.0.0 2> /dev/null
+fi
+
+
+
 exit 0
