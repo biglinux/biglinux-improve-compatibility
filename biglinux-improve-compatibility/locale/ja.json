@@ -1,0 +1,1 @@
+{"C":{"plural-forms":"nplurals=2; plural=(n != 1);","messages":{"Este sistema utiliza o pamac para gerenciar os pacotes":{"*":["このシステムは pamac を使用してパッケージを管理します。"]},"Redirecionando seu comando para o comando pamac":{"*":["コマンドを pamac コマンドにリダイレクトする"]},"Necessario instalar <b>jre8</b>":{"*":["<b>jre8</b>のインストールに必要"]},"Cancelar":{"*":["キャンセル"]},"Instalar":{"*":["取り付ける"]}}}}

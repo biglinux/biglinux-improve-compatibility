@@ -1,0 +1,1 @@
+{"C":{"plural-forms":"nplurals=2; plural=(n != 1);","messages":{"Este sistema utiliza o pamac para gerenciar os pacotes":{"*":["此系统使用 pamac 来管理包"]},"Redirecionando seu comando para o comando pamac":{"*":["将命令重定向到 pamac 命令"]},"Necessario instalar <b>jre8</b>":{"*":["安装 <b>jre8</b> 所必需的"]},"Cancelar":{"*":["取消"]},"Instalar":{"*":["安装"]}}}}

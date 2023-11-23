@@ -1,0 +1,1 @@
+{"C":{"plural-forms":"nplurals=2; plural=(n != 1);","messages":{"Este sistema utiliza o pamac para gerenciar os pacotes":{"*":["이 시스템은 pamac을 사용하여 패키지를 관리합니다."]},"Redirecionando seu comando para o comando pamac":{"*":["명령을 pamac 명령으로 리디렉션"]},"Necessario instalar <b>jre8</b>":{"*":["<b>jre8</b> 설치에 필요"]},"Cancelar":{"*":["취소"]},"Instalar":{"*":["설치하다"]}}}}
