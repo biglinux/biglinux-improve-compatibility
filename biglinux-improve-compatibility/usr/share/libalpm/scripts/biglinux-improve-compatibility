@@ -63,12 +63,24 @@ if [ ! -e "/usr/lib/libvpx.so.8" ]; then
     ln -s /usr/lib/libvpx.so /usr/lib/libvpx.so.8 2> /dev/null
 fi
 
+if [ ! -e "/usr/lib/libjxl.so.0.8" ]; then
+    ln -s /usr/lib/libjxl.so /usr/lib/libjxl.so.0.8 2> /dev/null
+fi
+
+if [ ! -e "/usr/lib/libjxl_threads.so.0.8" ]; then
+    ln -s /usr/lib/libjxl_threads.so /usr/lib/libjxl_threads.so.0.8 2> /dev/null
+fi
+
 if [ ! -e "/usr/lib/libtiff.so.5" ]; then
     ln -s /usr/lib/libtiff.so /usr/lib/libtiff.so.5 2> /dev/null
 fi
 
 if [[ ! -e "/usr/lib/libdav1d.so.6" && -e "/usr/lib/libdav1d.so" ]]; then
     ln -s /usr/lib/libdav1d.so /usr/lib/libdav1d.so.6 2> /dev/null
+fi
+
+if [[ ! -e "/usr/lib/librav1e.so.0.6" && -e "/usr/lib/libdav1d.so" ]]; then
+    ln -s /usr/lib/libdav1d.so /usr/lib/librav1e.so.0.6 2> /dev/null
 fi
 
 if [[ ! -e "/usr/lib/librav1e.so.0" && -e "/usr/lib/librav1e.so" ]]; then
