@@ -83,8 +83,16 @@ if [[ ! -e "/usr/lib/librav1e.so.0.6" && -e "/usr/lib/libdav1d.so" ]]; then
     ln -s /usr/lib/libdav1d.so /usr/lib/librav1e.so.0.6 2> /dev/null
 fi
 
-if [[ ! -e "/usr/lib/librav1e.so.0" && -e "/usr/lib/librav1e.so" ]]; then
-    ln -s /usr/lib/librav1e.so /usr/lib/librav1e.so.0 2> /dev/null
+if [[ ! -e "/usr/lib/libglslang.so.13" && -e "/usr/lib/libglslang.so" ]]; then
+    ln -s /usr/lib/libglslang.so /usr/lib/libglslang.so.13 2> /dev/null
+fi
+
+if [[ ! -e "/usr/lib/libSPIRV.so.13" && -e "/usr/lib/libSPIRV.so" ]]; then
+    ln -s /usr/lib/libSPIRV.so /usr/lib/libSPIRV.so.13 2> /dev/null
+fi
+
+if [ ! -e "/usr/lib/libprotobuf.so.23" ]; then
+    ln -s /usr/lib/libprotobuf.so /usr/lib/libprotobuf.so.23 2> /dev/null
 fi
 
 if [ ! -e "/usr/lib/libprotobuf.so.23" ]; then
