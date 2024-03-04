@@ -1,0 +1,10 @@
+[Trigger]
+Type = Package
+Operation = Install
+Operation = Upgrade
+Target = corectrl
+
+[Action]
+Description = Auto configure corectrl after install
+When = PostTransaction
+Exec = /usr/share/libalpm/scripts/biglinux-improve-compatibility-corectrl

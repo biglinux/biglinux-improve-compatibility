@@ -1,0 +1,9 @@
+[Trigger]
+Type = Package
+Operation = Remove
+Target = lact
+
+[Action]
+Description = Auto unconfigure lact after remove
+When = PreTransaction
+Exec = systemctl disable --now lactd

@@ -1,0 +1,9 @@
+[Trigger]
+Type = Package
+Operation = Remove
+Target = corectrl
+
+[Action]
+Description = Auto unconfigure corectrl after remove
+When = PreTransaction
+Exec = /usr/share/libalpm/scripts/biglinux-improve-compatibility-corectrl-remove
