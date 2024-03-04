@@ -7,4 +7,4 @@ Target = lact
 [Action]
 Description = Auto configure lact after install
 When = PostTransaction
-Exec = systemctl enable --now lactd
+Exec = /bin/sh -c 'systemctl enable --now lactd'

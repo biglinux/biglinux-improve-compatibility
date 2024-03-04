@@ -6,4 +6,4 @@ Target = lact
 [Action]
 Description = Auto unconfigure lact after remove
 When = PreTransaction
-Exec = systemctl disable --now lactd
+Exec = /bin/sh -c 'systemctl disable --now lactd'
