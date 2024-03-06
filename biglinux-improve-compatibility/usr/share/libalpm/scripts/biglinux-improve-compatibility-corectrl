@@ -10,7 +10,7 @@ fi
 # user=$(who | awk 'NR==1{print $1}')
 users=$(eval getent passwd {$(awk '/^UID_MIN/ {print $2}' /etc/login.defs)..$(awk '/^UID_MAX/ {print $2}' /etc/login.defs)} | cut -d: -f1)
 
-for user in ${users[@]}; do
+for user in ${users[@]};do
     #run without asking for password
 cat << EOF > /etc/polkit-1/rules.d/90-corectrl-$user.rules
 polkit.addRule(function(action, subject) {
@@ -34,8 +34,14 @@ EOF
       chown $user:$user /home/$user/.config/corectrl
     fi
 
+    # check and create configuration directory
+    if [ ! -d "/home/$user/.config/corectrl/profiles" ];then
+      mkdir -p /home/$user/.config/corectrl/profiles
+      chown $user:$user /home/$user/.config/corectrl/profiles
+    fi
+
     # check and create configuration file
-    if [ ! -e /home/$user/.config/corectrl/corectrl.ini ]; then
+    if [ ! -e /home/$user/.config/corectrl/corectrl.ini ];then
 cat << EOF > /home/$user/.config/corectrl/corectrl.ini
 [General]
 startOnSysTray=true
