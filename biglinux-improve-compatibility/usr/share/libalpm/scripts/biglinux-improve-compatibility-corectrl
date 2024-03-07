@@ -51,7 +51,7 @@ EOF
 
     # default config
     if [ ! -e /home/$user/.config/corectrl/profiles/_global_.ccpro -a -e /etc/skel/.config/corectrl/profiles/_global_.ccpro ];then
-        cp /home/$user/.config/corectrl/profiles/_global_.ccpro /etc/skel/.config/corectrl/profiles/_global_.ccpro
+        cp /etc/skel/.config/corectrl/profiles/_global_.ccpro /home/$user/.config/corectrl/profiles/_global_.ccpro
         chown $user:$user /etc/skel/.config/corectrl/profiles/_global_.ccpro
     fi
 done
