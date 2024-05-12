@@ -1,10 +1,5 @@
 #!/bin/bash
 
-#Temporary fix to Spectacle
-if [ -e "/usr/share/applications/org.kde.spectacle.desktop" ]; then
-    sed -i 's|Exec=/usr/bin/spectacle|Exec=QMLSCENE_DEVICE=softwarecontext /usr/bin/spectacle|g' /usr/share/applications/org.kde.spectacle.desktop
-fi
-
 #Change StartLimitBurst to 20, in one minute, when change theme from BigLinux panel count one Burst
 if [ -e "/usr/lib/systemd/user/plasma-plasmashell.service" ]; then
     sed -i 's|StartLimitBurst=3$|StartLimitBurst=20|g' /usr/lib/systemd/user/plasma-plasmashell.service
