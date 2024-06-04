@@ -6,7 +6,7 @@ export TEXTDOMAINDIR="/usr/share/locale"
 export TEXTDOMAIN=biglinux-improve-compatibility
 
 if [ ! -e /usr/lib/jvm/java-8-jre/jre/bin/javaws ]; then 
-    zenity --info --title="JAVA 8" --text $"Necessario instalar <b>jre8</b>" --ok-label=$"Cancelar" --extra-button=$"Instalar"
+    zenity --info --title="JAVA 8" --text $"Necessary to install <b>jre8</b>" --ok-label=$"Cancel" --extra-button=$"Install"
     if [ "$?" = "1" ];then
         pamac-installer --build jre8
         pkexec archlinux-java set java-8-jre/jre

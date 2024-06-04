@@ -5,8 +5,8 @@ export TEXTDOMAINDIR="/usr/share/locale"
 export TEXTDOMAIN=biglinux-improve-compatibility
 
 
-echo $"Este sistema utiliza o pamac para gerenciar os pacotes"
-echo $"Redirecionando seu comando para o comando pamac"
+echo $"This system uses pamac to manage packages."
+echo $"Redirecting your command to the pamac command"
 echo ""
 echo ""
 
