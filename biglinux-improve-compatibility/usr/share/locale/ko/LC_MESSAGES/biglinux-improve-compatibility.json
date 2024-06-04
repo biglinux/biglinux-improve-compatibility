@@ -1,0 +1,1 @@
+{"ko":{"plural-forms":"nplurals=2; plural=(n != 1);","messages":{"Necessary to install <b>jre8</b>":{"*":["<b>jre8</b>를 설치해야 합니다."]},"Cancel":{"*":["취소"]},"Install":{"*":["설치"]},"This system uses pamac to manage packages.":{"*":["이 시스템은 패키지를 관리하기 위해 pamac을 사용합니다."]},"Redirecting your command to the pamac command":{"*":["pamac 명령어로 명령을 리디렉션합니다."]}}}}

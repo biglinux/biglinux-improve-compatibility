@@ -1,0 +1,1 @@
+{"he":{"plural-forms":"nplurals=2; plural=(n != 1);","messages":{"Necessary to install <b>jre8</b>":{"*":["נדרש להתקין <b>jre8</b>"]},"Cancel":{"*":["ביטול"]},"Install":{"*":["התקן"]},"This system uses pamac to manage packages.":{"*":["מערכת זו משתמשת ב־pamac לניהול חבילות."]},"Redirecting your command to the pamac command":{"*":["מפנה את הפקודה שלך לפקודת pamac"]}}}}

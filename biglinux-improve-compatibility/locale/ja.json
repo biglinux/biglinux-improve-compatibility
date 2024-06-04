@@ -1,0 +1,1 @@
+{"ja":{"plural-forms":"nplurals=2; plural=(n != 1);","messages":{"Necessary to install <b>jre8</b>":{"*":["<b>jre8</b>のインストールが必要です"]},"Cancel":{"*":["キャンセル"]},"Install":{"*":["インストール"]},"This system uses pamac to manage packages.":{"*":["このシステムはパッケージを管理するためにpamacを使用しています。"]},"Redirecting your command to the pamac command":{"*":["pamacコマンドにあなたのコマンドをリダイレクトしています"]}}}}

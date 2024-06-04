@@ -1,0 +1,1 @@
+{"zh":{"plural-forms":"nplurals=2; plural=(n != 1);","messages":{"Necessary to install <b>jre8</b>":{"*":["需要安装 <b>jre8</b>"]},"Cancel":{"*":["取消"]},"Install":{"*":["安装"]},"This system uses pamac to manage packages.":{"*":["该系统使用pamac来管理软件包。"]},"Redirecting your command to the pamac command":{"*":["将您的命令重定向到pamac命令"]}}}}
