@@ -8,13 +8,16 @@ if [[ "$(dconf read /org/gnome/desktop/interface/color-scheme)" == "'prefer-dark
 fi
 
 # Use gtk3 theme with KDE open/save dialog in KDE
-if [[ $XDG_SESSION_DESKTOP == "KDE" ]]; then
-    if [[ -z "$SAL_USE_VCLPLUGIN" ]]; then
-        export SAL_USE_VCLPLUGIN=gtk3_kde6
-        if [[ $XDG_SESSION_TYPE == "wayland" ]]; then
-            export SAL_USE_VCLPLUGIN=gtk3 # In 2024-06-05 QT6 is very slow in libreoffice + wayland, maybe back in future with kf6 name
-        fi
-    fi
-fi
+# if [[ $XDG_SESSION_DESKTOP == "KDE" ]]; then
+#     if [[ -z "$SAL_USE_VCLPLUGIN" ]]; then
+#         export SAL_USE_VCLPLUGIN=gtk3_kde6
+#         if [[ $XDG_SESSION_TYPE == "wayland" ]]; then
+#             export SAL_USE_VCLPLUGIN=gtk3 # In 2024-06-05 QT6 is very slow in libreoffice + wayland, maybe back in future with kf6 name
+#         fi
+#     fi
+# fi
+
+# only gtk3 not completely broken In 2024-06-05
+export SAL_USE_VCLPLUGIN=gtk3 # In 2024-06-05 QT6 is very slow in libreoffice + wayland, maybe back in future with kf6 name
 
 /usr/bin/libreoffice ${1+"$@"}
