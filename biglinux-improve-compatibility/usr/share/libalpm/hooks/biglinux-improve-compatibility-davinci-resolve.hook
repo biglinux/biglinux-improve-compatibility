@@ -1,0 +1,14 @@
+[Trigger]
+Type = Package
+Operation = Install
+Operation = Upgrade
+Target = davinci-resolve
+Target = biglinux-improve-compatibility
+
+[Action]
+Description = Applying modifications to make Davinci Resolve compatible
+When = PostTransaction
+Exec = /bin/sh -c 'rm /opt/resolve/libs/libglib-2.0.so*; rm /opt/resolve/libs/libgio-2.0.so*; rm /opt/resolve/libs/libgmodule-2.0.so*'
+
+
+
