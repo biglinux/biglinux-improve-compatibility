@@ -1,0 +1,10 @@
+[Trigger]
+Type = Package
+Operation = Install
+Operation = Upgrade
+Target = php-fpm
+
+[Action]
+Description = Auto configure php-fpm after install
+When = PostTransaction
+Exec = /usr/share/libalpm/scripts/biglinux-improve-compatibility-php-fpm

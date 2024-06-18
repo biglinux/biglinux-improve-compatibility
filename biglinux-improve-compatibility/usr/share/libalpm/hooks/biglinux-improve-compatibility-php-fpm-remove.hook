@@ -1,0 +1,9 @@
+[Trigger]
+Type = Package
+Operation = Remove
+Target = php-fpm
+
+[Action]
+Description = Auto unconfigure php-fpm after remove
+When = PreTransaction
+Exec = /usr/share/libalpm/scripts/biglinux-improve-compatibility-php-fpm-remove

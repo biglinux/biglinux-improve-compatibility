@@ -1,0 +1,10 @@
+[Trigger]
+Type = Package
+Operation = Install
+Operation = Upgrade
+Target = nginx
+
+[Action]
+Description = Auto configure nginx after install
+When = PostTransaction
+Exec = /usr/share/libalpm/scripts/biglinux-improve-compatibility-nginx

@@ -1,0 +1,9 @@
+[Trigger]
+Type = Package
+Operation = Remove
+Target = nginx
+
+[Action]
+Description = Auto unconfigure nginx after remove
+When = PreTransaction
+Exec = /usr/share/libalpm/scripts/biglinux-improve-compatibility-nginx-remove
