@@ -1,0 +1,5 @@
+#!/usr/bin/bash
+
+if [ -d "/etc/distrobox/" ];then
+  rm -rf "/etc/distrobox/"
+fi

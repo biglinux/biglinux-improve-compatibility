@@ -1,0 +1,9 @@
+[Trigger]
+Type = Package
+Operation = Remove
+Target = distrobox
+
+[Action]
+Description = Auto unconfigure distrobox after remove
+When = PreTransaction
+Exec = /usr/share/libalpm/scripts/biglinux-improve-compatibility-distrobox-remove

@@ -1,0 +1,11 @@
+#!/usr/bin/bash
+
+sed -i '/log_timestamp/s/-u //' /usr/bin/distrobox-enter
+
+if [ ! -d "/etc/distrobox/" ];then
+  mkdir -p /etc/distrobox/
+fi
+
+if [ ! -e "/etc/distrobox/distrobox.conf" ];then
+  echo 'container_image_default=xivastudio/biglinux-archlinux:latest' > /etc/distrobox/distrobox.conf
+fi

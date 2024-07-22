@@ -1,0 +1,10 @@
+[Trigger]
+Type = Package
+Operation = Install
+Operation = Upgrade
+Target = distrobox
+
+[Action]
+Description = Auto configure distrobox after install
+When = PostTransaction
+Exec = /usr/share/libalpm/scripts/biglinux-improve-compatibility-distrobox
