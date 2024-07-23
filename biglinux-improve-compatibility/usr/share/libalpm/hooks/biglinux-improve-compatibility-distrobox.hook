@@ -3,6 +3,7 @@ Type = Package
 Operation = Install
 Operation = Upgrade
 Target = distrobox
+Target = biglinux-improve-compatibility
 
 [Action]
 Description = Auto configure distrobox after install

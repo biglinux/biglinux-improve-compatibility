@@ -1,6 +1,8 @@
 #!/usr/bin/bash
 
 sed -i '/log_timestamp/s/-u //' /usr/bin/distrobox-enter
+sed -i '/desktop_home_file=/s/${container_name}-//' /usr/bin/distrobox-export
+
 
 if [ ! -d "/etc/distrobox/" ];then
   mkdir -p /etc/distrobox/
