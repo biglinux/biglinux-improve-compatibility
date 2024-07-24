@@ -17,7 +17,7 @@
 #     fi
 # fi
 
-# only gtk3 not completely broken In 2024-06-05
-export SAL_USE_VCLPLUGIN=gtk3 # In 2024-06-05 QT6 is very slow in libreoffice + wayland, maybe back in future with kf6 name
-
+# kf6 in wayland mode is very slow, force xcb
+export SAL_USE_VCLPLUGIN=kf6
+export QT_QPA_PLATFORM=xcb
 /usr/bin/libreoffice ${1+"$@"}
