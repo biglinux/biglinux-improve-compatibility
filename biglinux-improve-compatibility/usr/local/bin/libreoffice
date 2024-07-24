@@ -1,11 +1,11 @@
 #!/bin/bash
 
 # Improve icon color detection
-# if [[ "$(dconf read /org/gnome/desktop/interface/color-scheme)" == "'prefer-dark'" ]]; then
-#     if [[ -z "$VCL_ICONS_FOR_DARK_THEME" ]]; then
-#         export VCL_ICONS_FOR_DARK_THEME=1
-#     fi
-# fi
+if [[ "$(dconf read /org/gnome/desktop/interface/color-scheme)" == "'prefer-dark'" ]]; then
+    if [[ -z "$VCL_ICONS_FOR_DARK_THEME" ]]; then
+        export VCL_ICONS_FOR_DARK_THEME=1
+    fi
+fi
 
 # Use gtk3 theme with KDE open/save dialog in KDE
 # if [[ $XDG_SESSION_DESKTOP == "KDE" ]]; then
