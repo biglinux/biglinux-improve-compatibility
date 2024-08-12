@@ -1,23 +1,27 @@
 #!/bin/bash
 
-# Improve icon color detection
-if [[ "$(dconf read /org/gnome/desktop/interface/color-scheme)" == "'prefer-dark'" ]]; then
-    if [[ -z "$VCL_ICONS_FOR_DARK_THEME" ]]; then
-        export VCL_ICONS_FOR_DARK_THEME=1
+if [[ $XDG_CURRENT_DESKTOP = "KDE" ]]; then
+
+    # Improve icon color detection
+    if [[ "$(dconf read /org/gnome/desktop/interface/color-scheme)" == "'prefer-dark'" ]]; then
+        if [[ -z "$VCL_ICONS_FOR_DARK_THEME" ]]; then
+            export VCL_ICONS_FOR_DARK_THEME=1
+        fi
     fi
+
+    # Use gtk3 theme with KDE open/save dialog in KDE
+    # if [[ $XDG_SESSION_DESKTOP == "KDE" ]]; then
+    #     if [[ -z "$SAL_USE_VCLPLUGIN" ]]; then
+    #         export SAL_USE_VCLPLUGIN=gtk3_kde6
+    #         if [[ $XDG_SESSION_TYPE == "wayland" ]]; then
+    #             export SAL_USE_VCLPLUGIN=gtk3 # In 2024-06-05 QT6 is very slow in libreoffice + wayland, maybe back in future with kf6 name
+    #         fi
+    #     fi
+    # fi
+
+    # kf6 in wayland mode is very slow, force xcb
+    export SAL_USE_VCLPLUGIN=kf6
+    export QT_QPA_PLATFORM=xcb
 fi
 
-# Use gtk3 theme with KDE open/save dialog in KDE
-# if [[ $XDG_SESSION_DESKTOP == "KDE" ]]; then
-#     if [[ -z "$SAL_USE_VCLPLUGIN" ]]; then
-#         export SAL_USE_VCLPLUGIN=gtk3_kde6
-#         if [[ $XDG_SESSION_TYPE == "wayland" ]]; then
-#             export SAL_USE_VCLPLUGIN=gtk3 # In 2024-06-05 QT6 is very slow in libreoffice + wayland, maybe back in future with kf6 name
-#         fi
-#     fi
-# fi
-
-# kf6 in wayland mode is very slow, force xcb
-export SAL_USE_VCLPLUGIN=kf6
-export QT_QPA_PLATFORM=xcb
-/usr/bin/libreoffice ${1+"$@"}
+exec /usr/bin/libreoffice ${1+"$@"}
