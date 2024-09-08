@@ -22,6 +22,13 @@ if [[ $XDG_CURRENT_DESKTOP = "KDE" ]]; then
     # kf6 in wayland mode is very slow, force xcb
     export SAL_USE_VCLPLUGIN=kf6
     export QT_QPA_PLATFORM=xcb
+    
+    # Temporary fix, force nvidia to use opengl over vulkan with zink
+    if lsmod | grep -q nvidia_drm; then
+        export __GLX_VENDOR_LIBRARY_NAME=mesa
+        export MESA_LOADER_DRIVER_OVERRIDE=zink
+        export GALLIUM_DRIVER=zink
+    fi
 fi
 
 exec /usr/bin/libreoffice ${1+"$@"}
