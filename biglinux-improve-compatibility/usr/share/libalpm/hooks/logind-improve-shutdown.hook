@@ -1,0 +1,11 @@
+[Trigger]
+Type = Package
+Operation = Install
+Operation = Upgrade
+Target = biglinux-improve-compatibility
+Target = systemd
+
+[Action]
+Description = Faster stop all processes when shutdown
+When = PostTransaction
+Exec = /bin/sh -c 'sed "s|TimeoutStopSec=120s|TimeoutStopSec=5s|g" /usr/lib/systemd/system/user@.service'
