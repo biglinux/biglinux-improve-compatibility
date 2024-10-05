@@ -8,4 +8,4 @@ Target = systemd
 [Action]
 Description = Faster stop all processes when shutdown
 When = PostTransaction
-Exec = /bin/sh -c 'sed "s|TimeoutStopSec=120s|TimeoutStopSec=5s|g" /usr/lib/systemd/system/user@.service'
+Exec = /bin/sh -c 'sed -i "s|TimeoutStopSec=120s|TimeoutStopSec=5s|g" /usr/lib/systemd/system/user@.service'
