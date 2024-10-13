@@ -4,7 +4,7 @@ After=plasma-workspace.target
 
 [Service]
 Type=oneshot
-ExecStart=/usr/local/bin/big-execute-after-user-login
+ExecStart=/usr/bin/big-execute-after-user-login
 
 [Install]
 WantedBy=plasma-workspace.target
