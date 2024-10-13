@@ -1,0 +1,11 @@
+[Unit]
+Description=BigLinux Execute User After Login
+After=multi-user.target
+
+[Service]
+Type=oneshot
+ExecStartPre=/bin/sleep 5
+ExecStart=/usr/local/bin/big-execute-after-user-login
+
+[Install]
+WantedBy=default.target

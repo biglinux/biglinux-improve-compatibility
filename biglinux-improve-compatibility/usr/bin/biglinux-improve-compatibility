@@ -11,3 +11,12 @@ if [ ! -z "$(ls -A -- /etc/init.d)" ]; then
     done
 
 fi
+
+
+if [[ -e /run/miso/sfs/livefs ]]; then
+
+if [[ -e /usr/bin/gdm ]]; then
+
+echo '[User]
+# Add this line to specify the livecd session
+XSession=livecdWayland' > /var/lib/AccountsService/users/$(ls -1 /home/)

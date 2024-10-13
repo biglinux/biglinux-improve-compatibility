@@ -1,0 +1,6 @@
+#!/bin/bash
+
+# Fix GTK3 theme in live mode
+if [[ "$XDG_SESSION_DESKTOP" = "KDE" ]] && [[ -e /run/miso/sfs/livefs ]]; then
+    qdbus6 org.kde.GtkConfig /GtkConfig org.kde.GtkConfig.setGtkTheme $(grep 'gtk-theme-name=' "$HOME/.config/gtk-3.0/settings.ini" | cut -f2-5 -d=)
+fi
