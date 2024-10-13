@@ -1,11 +1,10 @@
 [Unit]
-Description=BigLinux Execute User After Login
-After=multi-user.target
+Description=BigLinux Execute User After Login in Plasma
+After=plasma-workspace.target
 
 [Service]
 Type=oneshot
-ExecStartPre=/bin/sleep 5
 ExecStart=/usr/local/bin/big-execute-after-user-login
 
 [Install]
-WantedBy=default.target
+WantedBy=plasma-workspace.target
