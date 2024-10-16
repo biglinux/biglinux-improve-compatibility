@@ -12,7 +12,7 @@ if [[ $XDG_CURRENT_DESKTOP = "KDE" ]]; then
     #     fi
     # fi
 
-    if [[ $XDG_CURRENT_DESKTOP = "wayland" ]]; then
+    if [[ $XDG_CURRENT_DESKTOP = "wayland" ]] && [[ $Vulkan_Supported = "1" ]]; then
         # Temporary fix, force nvidia to use opengl over vulkan with zink
         if lsmod | grep -q nvidia_drm; then
 
