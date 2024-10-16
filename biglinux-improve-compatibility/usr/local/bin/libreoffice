@@ -12,17 +12,21 @@ if [[ $XDG_CURRENT_DESKTOP = "KDE" ]]; then
     #     fi
     # fi
 
+    if [[ $XDG_CURRENT_DESKTOP = "wayland" ]]; then
+        # Temporary fix, force nvidia to use opengl over vulkan with zink
+        if lsmod | grep -q nvidia_drm; then
+
+            [[ -z $__GLX_VENDOR_LIBRARY_NAME ]]     && export __GLX_VENDOR_LIBRARY_NAME=mesa
+            [[ -z $MESA_LOADER_DRIVER_OVERRIDE ]]   && export MESA_LOADER_DRIVER_OVERRIDE=zink
+            [[ -z $GALLIUM_DRIVER ]]                && export GALLIUM_DRIVER=zink
+        fi
+    fi
+    
     # kf6 in wayland mode is very slow, force xcb
     [[ -z $SAL_USE_VCLPLUGIN ]] && export SAL_USE_VCLPLUGIN=kf6
-    [[ -z $QT_QPA_PLATFORM ]]   && export QT_QPA_PLATFORM=xcb
+    [[ -z $QT_QPA_PLATFORM ]]   && export QT_QPA_PLATFORM=wayland
+    export SAL_DISABLE_WATCHDOG=1
 
-    # Temporary fix, force nvidia to use opengl over vulkan with zink
-    if lsmod | grep -q nvidia_drm; then
-
-        [[ -z $__GLX_VENDOR_LIBRARY_NAME ]]     && export __GLX_VENDOR_LIBRARY_NAME=mesa
-        [[ -z $MESA_LOADER_DRIVER_OVERRIDE ]]   && export MESA_LOADER_DRIVER_OVERRIDE=zink
-        [[ -z $GALLIUM_DRIVER ]]                && export GALLIUM_DRIVER=zink
-    fi
 fi
 
 # Improve icon color detection
