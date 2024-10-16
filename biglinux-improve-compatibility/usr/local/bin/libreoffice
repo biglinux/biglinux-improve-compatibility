@@ -13,23 +13,22 @@ if [[ $XDG_CURRENT_DESKTOP = "KDE" ]]; then
     # fi
 
     # kf6 in wayland mode is very slow, force xcb
-    export SAL_USE_VCLPLUGIN=kf6
-    export QT_QPA_PLATFORM=xcb
-    
+    [[ -z $SAL_USE_VCLPLUGIN ]] && export SAL_USE_VCLPLUGIN=kf6
+    [[ -z $QT_QPA_PLATFORM ]]   && export QT_QPA_PLATFORM=xcb
+
     # Temporary fix, force nvidia to use opengl over vulkan with zink
     if lsmod | grep -q nvidia_drm; then
-        export __GLX_VENDOR_LIBRARY_NAME=mesa
-        export MESA_LOADER_DRIVER_OVERRIDE=zink
-        export GALLIUM_DRIVER=zink
+
+        [[ -z $__GLX_VENDOR_LIBRARY_NAME ]]     && export __GLX_VENDOR_LIBRARY_NAME=mesa
+        [[ -z $MESA_LOADER_DRIVER_OVERRIDE ]]   && export MESA_LOADER_DRIVER_OVERRIDE=zink
+        [[ -z $GALLIUM_DRIVER ]]                && export GALLIUM_DRIVER=zink
     fi
 fi
 
 # Improve icon color detection
 if [[ "$(dconf read /org/gnome/desktop/interface/color-scheme)" == "'prefer-dark'" ]]; then
-    if [[ -z "$VCL_ICONS_FOR_DARK_THEME" ]]; then
-        export VCL_ICONS_FOR_DARK_THEME=1
-    fi
-fi
 
+    [[ -z $VCL_ICONS_FOR_DARK_THEME ]] && export VCL_ICONS_FOR_DARK_THEME=1
+fi
 
 exec /usr/bin/libreoffice ${1+"$@"}
