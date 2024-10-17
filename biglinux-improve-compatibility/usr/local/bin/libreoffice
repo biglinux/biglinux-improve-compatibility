@@ -24,7 +24,7 @@ if [[ $XDG_CURRENT_DESKTOP = "KDE" ]]; then
     
     # kf6 in wayland mode is very slow, force xcb
     [[ -z $SAL_USE_VCLPLUGIN ]] && export SAL_USE_VCLPLUGIN=kf6
-    [[ -z $QT_QPA_PLATFORM ]]   && export QT_QPA_PLATFORM=wayland
+    [[ -z $QT_QPA_PLATFORM ]]   && export QT_QPA_PLATFORM=xcb
     export SAL_DISABLE_WATCHDOG=1
 
 fi
