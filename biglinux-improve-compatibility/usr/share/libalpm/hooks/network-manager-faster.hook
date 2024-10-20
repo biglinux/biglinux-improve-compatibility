@@ -1,0 +1,11 @@
+[Trigger]
+Type = Package
+Operation = Install
+Operation = Upgrade
+Target = biglinux-improve-compatibility
+Target = networkmanager
+
+[Action]
+Description = Disables the need for parts of the system like Sddm to wait for Network Manager to finish running
+When = PostTransaction
+Exec = /bin/sh -c 'sed -i "s|Type=dbus|Type=simple|g" /usr/lib/systemd/system/NetworkManager.service'
