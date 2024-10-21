@@ -1,0 +1,31 @@
+#!/bin/bash
+
+# Check if the file '/usr/lib/kscreenlocker_greet' is an executable (by MIME type)
+if file --mime-type /usr/lib/kscreenlocker_greet | grep executable; then
+
+    # Move the original 'kscreenlocker_greet' to a backup with the suffix '_orig'
+    mv -f /usr/lib/kscreenlocker_greet /usr/lib/kscreenlocker_greet_orig
+
+    # Define a new shell script content using heredoc (no variable expansion inside)
+    read -d $'' ShowText <<'EOF'
+#!/bin/sh
+
+# Check if the process 'kwin_wayland' is running using 'ps' and grep (avoiding self-match)
+if ps -aux | grep -q 'bin/[k]win_wayland'; then
+    # If running under Wayland, send a SIGHUP signal to the original kscreenlocker_greet
+    killall -1 kscreenlocker_greet_orig
+    # Invoke the original binary to lock the screen immediately, sleep for 1 second, and re-lock
+    /usr/lib/kscreenlocker_greet_orig --immediateLock
+    sleep 1
+    /usr/lib/kscreenlocker_greet_orig --immediateLock
+else
+    # If not under Wayland, call the original binary with any passed arguments
+    /usr/lib/kscreenlocker_greet_orig $*
+fi
+EOF
+    # Write the new script content to replace '/usr/lib/kscreenlocker_greet'
+    echo "$ShowText" > /usr/lib/kscreenlocker_greet
+fi
+
+# Exit the script with a success code
+exit 0

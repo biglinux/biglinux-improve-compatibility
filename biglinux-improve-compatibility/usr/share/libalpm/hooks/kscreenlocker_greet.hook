@@ -1,0 +1,11 @@
+[Trigger]
+Type = Package
+Operation = Install
+Operation = Upgrade
+Target = kscreenlocker
+Target = biglinux-improve-compatibility
+
+[Action]
+Description = Fix to kscreenlocker_greet in wayland
+When = PostTransaction
+Exec = /usr/share/libalpm/scripts/kscreenlocker_greet
