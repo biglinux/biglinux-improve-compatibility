@@ -25,6 +25,7 @@ fi
 EOF
     # Write the new script content to replace '/usr/lib/kscreenlocker_greet'
     echo "$ShowText" > /usr/lib/kscreenlocker_greet
+    chmod +x /usr/lib/kscreenlocker_greet
 fi
 
 # Exit the script with a success code
