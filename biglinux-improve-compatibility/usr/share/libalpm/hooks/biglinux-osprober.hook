@@ -1,0 +1,10 @@
+[Trigger]
+Operation = Install
+Operation = Upgrade
+Type = Package
+Target = os-prober
+
+[Action]
+Description = Apply modifications to /usr/lib/os-probes/50mounted-tests
+When = PostTransaction
+Exec = /bin/sh -c "sed -i 's|subvols=\$(btrfs subvolume list \"\$tmpmnt\" \| cut -d '\'' '\'' -f 9)|subvols=\$(btrfs subvolume list \"\$tmpmnt\" \| cut -d '\'' '\'' -f 9 \| grep -v \"timeshift-btrfs\")|' /usr/lib/os-probes/50mounted-tests"
