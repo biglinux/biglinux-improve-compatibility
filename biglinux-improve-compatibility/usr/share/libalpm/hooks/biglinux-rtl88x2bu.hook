@@ -1,0 +1,9 @@
+[Trigger]
+Operation = Install
+Type = Package
+Target = rtl88x2bu-dkms-git
+
+[Action]
+Description = Disabling module rtw88_8822bu
+When = PostTransaction
+Exec = /bin/sh -c "echo 'blacklist rtw88_8822bu' > /etc/modprobe.d/rtw8822bu.conf && rmmod rtw88_8822bu && modprobe 88x2bu"
