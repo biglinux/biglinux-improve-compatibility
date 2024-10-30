@@ -1,0 +1,12 @@
+[Trigger]
+Operation = Install
+Operation = Upgrade
+Type = Package
+Target = linux
+Target = linux-lts
+Target = rtl88x2bu-dkms-git
+
+[Action]
+Description = Installing rtl88x2bu driver and disabling rtw88_8822bu
+When = PostTransaction
+Exec = /bin/sh -c "yay -S rtl88x2bu-dkms-git && echo 'blacklist rtw88_8822bu' > /etc/modprobe.d/rtw8822bu.conf && rmmod rtw88_8822bu && modprobe 88x2bu"
