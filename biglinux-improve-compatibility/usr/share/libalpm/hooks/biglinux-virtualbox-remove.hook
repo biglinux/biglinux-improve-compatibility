@@ -1,0 +1,9 @@
+[Trigger]
+Operation = Remove
+Type = Package
+Target = virtualbox
+
+[Action]
+Description = Remove VirtualBox and kernel modules for the active kernel
+When = PostTransaction
+Exec = /bin/sh -c "/usr/share/libalpm/scripts/biglinux-remove-virtualbox"
