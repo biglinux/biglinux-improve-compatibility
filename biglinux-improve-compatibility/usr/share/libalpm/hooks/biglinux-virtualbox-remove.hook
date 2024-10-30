@@ -4,6 +4,6 @@ Type = Package
 Target = virtualbox
 
 [Action]
-Description = Remove VirtualBox and kernel modules for the active kernel
+Description = Remove VirtualBox and reconfigure.
 When = PostTransaction
 Exec = /bin/sh -c "/usr/share/libalpm/scripts/biglinux-remove-virtualbox"
