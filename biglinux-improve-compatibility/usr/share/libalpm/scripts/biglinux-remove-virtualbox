@@ -1,0 +1,7 @@
+#!/bin/bash
+
+USER_ADD=$(logname)
+
+gpasswd -d $USER_ADD vboxusers && groupdel vboxusers
+
+rmmod vboxnetflt vboxnetadp vboxdrv

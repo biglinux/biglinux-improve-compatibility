@@ -1,0 +1,11 @@
+#!/bin/bash
+
+USER_ADD=$(logname)
+
+if ! getent group vboxusers > /dev/null; then
+    groupadd vboxusers
+fi
+
+gpasswd -a $USER_ADD vboxusers
+
+vboxreload
