@@ -1,0 +1,9 @@
+[Trigger]
+Operation = Remove
+Type = Package
+Target = rtl88x2bu-dkms-git
+
+[Action]
+Description = Remove Blocklist module rtw8822bu
+When = PostTransaction
+Exec = /bin/sh -c "rm -f /etc/modprobe.d/rtw8822bu.conf"
