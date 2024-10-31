@@ -1,7 +1,10 @@
 #!/bin/bash
 
-USER_ADD=$(logname)
-
-gpasswd -d $USER_ADD vboxusers && groupdel vboxusers
+if getent group vboxusers > /dev/null; then
+    for USER in $(getent group vboxusers | cut -d: -f4 | tr ',' ' '); do
+        gpasswd -d "$USER" vboxusers
+    done
+    groupdel vboxusers
+fi
 
 rmmod vboxnetflt vboxnetadp vboxdrv

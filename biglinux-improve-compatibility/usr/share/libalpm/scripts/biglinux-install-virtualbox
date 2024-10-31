@@ -1,11 +1,13 @@
 #!/bin/bash
 
-USER_ADD=$(logname)
-
 if ! getent group vboxusers > /dev/null; then
     groupadd vboxusers
 fi
 
-gpasswd -a $USER_ADD vboxusers
+for USER_ADD in $(ls -1 /home); do
+    if id "$USER_ADD" &>/dev/null; then
+        gpasswd -a "$USER_ADD" vboxusers
+    fi
+done
 
 vboxreload
