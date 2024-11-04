@@ -1,0 +1,9 @@
+[Trigger]
+Operation = Remove
+Type = Package
+Target = docker
+
+[Action]
+Description = Remove Docker and reconfigure.
+When = PostTransaction
+Exec = /bin/sh -c "/usr/share/libalpm/scripts/biglinux-remove-docker"

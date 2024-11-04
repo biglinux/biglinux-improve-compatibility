@@ -1,0 +1,19 @@
+#!/bin/bash
+
+if ! getent group docker > /dev/null; then
+    groupadd docker
+fi
+
+for USER_ADD in $(ls -1 /home); do
+    if id "$USER_ADD" &>/dev/null; then
+        gpasswd -a "$USER_ADD" docker
+    fi
+done
+
+systemctl daemon-reload
+
+systemctl start docker.service
+
+systemctl enable docker.service
+
+newgrp docker
