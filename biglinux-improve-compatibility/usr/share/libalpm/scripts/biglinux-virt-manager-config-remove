@@ -1,0 +1,23 @@
+#!/usr/bin/bash
+
+# Adiciona os grupos libvirt e libvirt-qemu a todos usuarios acima de 1000
+for user in $(awk -F':' '{ if ($3 >= 1000 && $1 != "nobody") print $1 }' /etc/passwd); do
+    gpasswd -d $user libvirt
+    gpasswd -d $user libvirt-qemu
+done
+
+# Apaga backup do default.xml
+if [ -e "/etc/libvirt/qemu/networks/default.xml" ]; then
+    rm "/etc/libvirt/qemu/networks/default.xml"
+fi
+if [ -e "/etc/libvirt/qemu/networks/default.xml.bkp" ]; then
+    rm "/etc/libvirt/qemu/networks/default.xml.bkp"
+fi
+
+# Revert bridge ao original
+if [ -e /etc/qemu/bridge.conf ]; then
+    sed -i '/allow all/d' /etc/qemu/bridge.conf > /dev/null
+fi
+
+# Disable and stop o libvirtd
+systemctl disable --now libvirtd.service

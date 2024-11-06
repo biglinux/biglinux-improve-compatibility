@@ -1,0 +1,55 @@
+#!/usr/bin/bash
+
+# Adiciona os grupos libvirt e libvirt-qemu a todos usuarios acima de 1000
+for user in $(awk -F':' '{ if ($3 >= 1000 && $1 != "nobody") print $1 }' /etc/passwd); do
+    usermod -a -G libvirt $user
+    usermod -a -G libvirt-qemu $user
+    sudo -u $user XDG_RUNTIME_DIR=/run/user/$(id -u $user) gsettings set org.virt-manager.virt-manager xmleditor-enabled true
+    sudo -u $user XDG_RUNTIME_DIR=/run/user/$(id -u $user) gsettings set org.virt-manager.virt-manager system-tray true
+done
+
+# Backup do default.xml
+if [ ! -e "/etc/libvirt/qemu/networks/default.xml.bkp" ] && [ -e "/etc/libvirt/qemu/networks/default.xml" ];then
+    cp /etc/libvirt/qemu/networks/default.xml /etc/libvirt/qemu/networks/default.xml.bkp
+fi
+
+# Verifica se o range de ip usado pelo libvirt não está sendo usado por outro rede
+libvirtNetRange=$(grep -oP "(?<=ip address=')[0-9]+\.[0-9]+\.[0-9]+" /etc/libvirt/qemu/networks/default.xml)
+if [ -n "$(ip -o -4 a | grep $libvirtNetRange)" ]; then
+    newLibvirtNetRange=$(awk -F. '{print $1 "." $2 "." $3+1}' <<< $libvirtNetRange)
+    sed -i "s/$libvirtNetRange/$newLibvirtNetRange/g" /etc/libvirt/qemu/networks/default.xml
+fi
+
+# firewallBackend=$(awk '/^firewall_backend/ { gsub(/"/, "", $3); print $3 }' /etc/libvirt/network.conf)
+# if [ "$firewallBackend" != "iptables" ];then
+#     sed -i '/^firewall_backend/d' /etc/libvirt/network.conf
+#     echo 'firewall_backend = "iptables"' | tee -a /etc/libvirt/network.conf > /dev/null
+#     systemctl restart libvirtd.service
+# fi
+
+# Aceita bridge em todas as redes
+if [ -e /etc/qemu/bridge.conf ] && [ -z "$(grep 'allow all' /etc/qemu/bridge.conf)" ]; then
+    echo "allow all" | tee -a /etc/qemu/bridge.conf > /dev/null
+fi
+
+# Starta o libvirtd
+# systemctl start virtqemud.service
+systemctl start libvirtd.service
+
+# Configura, starta e coloca no autostart a rede do libvirt
+network=$(LANG=C virsh net-list | grep default)
+if [ -z "$network" ];then
+    virsh net-define /etc/libvirt/qemu/networks/default.xml
+fi
+network=$(LANG=C virsh net-list | grep default)
+if [ "$(awk '{print $2}' <<< $network)" != "active" ];then
+    virsh net-start default
+fi
+network=$(LANG=C virsh net-list | grep default)
+if [ "$(awk '{print $3}' <<< $network)" != "yes" ];then
+    virsh net-autostart default
+fi
+
+# Habilita o libvirtd para iniciar no boot
+# systemctl enable virtqemud.service
+systemctl enable libvirtd.service

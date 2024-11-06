@@ -1,0 +1,12 @@
+[Trigger]
+Type = Package
+Operation = Install
+Operation = Upgrade
+Target = libvirt
+Target = biglinux-virt-manager-config
+Target = virt-manager
+
+[Action]
+Description = Configure virt-manager
+When = PostTransaction
+Exec = /usr/share/libalpm/scripts/biglinux-virt-manager-config-install
