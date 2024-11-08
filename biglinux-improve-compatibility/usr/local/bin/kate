@@ -1,6 +1,6 @@
 #!/bin/sh
 
-if [[ $XDG_SESSION_TYPE == "wayland" ]] && type kdotool &> /dev/null ; then
+if [[ $XDG_SESSION_TYPE == "wayland" ]] && [[ $XDG_SESSION_DESKTOP == "KDE" ]] && type kdotool &> /dev/null ; then
     kdotool windowactivate $(kdotool search --name kate | head -n1)
     /usr/bin/kate ${1+"$@"}
 else

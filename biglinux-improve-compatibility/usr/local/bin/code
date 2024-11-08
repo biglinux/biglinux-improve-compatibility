@@ -1,6 +1,6 @@
 #!/bin/sh
 
-if [[ $XDG_SESSION_TYPE == "wayland" ]] && type kdotool &> /dev/null ; then
+if [[ $XDG_SESSION_TYPE == "wayland" ]] && [[ $XDG_SESSION_DESKTOP == "KDE" ]] && type kdotool &> /dev/null ; then
 
     window_id=$(kdotool search --name 'code - oss' | head -n1)
 

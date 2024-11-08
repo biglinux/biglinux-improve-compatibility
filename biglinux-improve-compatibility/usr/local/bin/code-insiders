@@ -1,6 +1,6 @@
 #!/bin/sh
 
-if [[ $XDG_SESSION_TYPE == "wayland" ]] && type kdotool &> /dev/null ; then
+if [[ $XDG_SESSION_TYPE == "wayland" ]] && [[ $XDG_SESSION_DESKTOP == "KDE" ]] && type kdotool &> /dev/null ; then
     kdotool windowactivate $(kdotool search --name 'visual studio code - insiders' | head -n1)
     /usr/bin/code-insiders ${1+"$@"}
 else
