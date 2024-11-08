@@ -1,0 +1,9 @@
+[Trigger]
+Type = Package
+Operation = Remove
+Target = biglinux-improve-compatibility
+
+[Action]
+Description = Disable auto focus in wayland for VS Code Insiders
+When = PreTransaction
+Exec = /bin/sh -c 'sed -i "s|/usr/local/bin/code-insiders|/usr/share/code-insiders/code-insiders|g" /usr/share/applications/code-insiders.desktop'

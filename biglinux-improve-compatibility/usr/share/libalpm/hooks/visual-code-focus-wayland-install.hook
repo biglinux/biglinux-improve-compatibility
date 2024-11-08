@@ -1,0 +1,9 @@
+[Trigger]
+Type = Package
+Operation = Install
+Target = visual-studio-code-bin
+
+[Action]
+Description = Enable auto focus in wayland for VS Code
+When = PreTransaction
+Exec = /bin/sh -c 'sed -i "s|/usr/bin/code|/usr/local/bin/code|g" /usr/share/applications/code.desktop'

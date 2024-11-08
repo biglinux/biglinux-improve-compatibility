@@ -1,0 +1,9 @@
+[Trigger]
+Type = Package
+Operation = Install
+Target = code-insiders-bin
+
+[Action]
+Description = Enable auto focus in wayland for VS Code Insiders
+When = PreTransaction
+Exec = /bin/sh -c 'sed -i "s|/usr/share/code-insiders/code-insiders|/usr/local/bin/code-insiders|g" /usr/share/applications/code-insiders.desktop'

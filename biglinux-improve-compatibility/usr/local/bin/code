@@ -1,0 +1,15 @@
+#!/bin/sh
+
+if [[ $XDG_SESSION_TYPE == "wayland" ]] && type kdotool &> /dev/null ; then
+
+    window_id=$(kdotool search --name 'code - oss' | head -n1)
+
+    if [[ -z $window_id ]]; then
+        window_id=$(kdotool search --name 'visual studio code$' | head -n1)
+    fi    
+    kdotool windowactivate $window_id
+
+    /usr/bin/code ${1+"$@"}
+else
+    /usr/bin/code ${1+"$@"}
+fi

@@ -1,0 +1,9 @@
+[Trigger]
+Type = Package
+Operation = Remove
+Target = biglinux-improve-compatibility
+
+[Action]
+Description = Disable auto focus in wayland for VS Code
+When = PreTransaction
+Exec = /bin/sh -c 'sed -i "s|/usr/local/bin/code|/usr/bin/code|g" /usr/share/applications/code.desktop'

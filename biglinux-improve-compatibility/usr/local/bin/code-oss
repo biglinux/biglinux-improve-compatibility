@@ -1,0 +1,8 @@
+#!/bin/sh
+
+if [[ $XDG_SESSION_TYPE == "wayland" ]] && type kdotool &> /dev/null ; then
+    kdotool windowactivate $(kdotool search --name 'code - oss' | head -n1)
+    /usr/bin/code-oss ${1+"$@"}
+else
+    /usr/bin/code-oss ${1+"$@"}
+fi
