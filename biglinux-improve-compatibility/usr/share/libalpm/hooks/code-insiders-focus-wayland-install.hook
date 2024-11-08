@@ -1,6 +1,7 @@
 [Trigger]
 Type = Package
 Operation = Install
+Operation = Upgrade
 Target = code-insiders-bin
 
 [Action]

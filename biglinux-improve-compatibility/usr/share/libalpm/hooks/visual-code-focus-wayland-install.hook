@@ -1,6 +1,7 @@
 [Trigger]
 Type = Package
 Operation = Install
+Operation = Upgrade
 Target = visual-studio-code-bin
 
 [Action]
