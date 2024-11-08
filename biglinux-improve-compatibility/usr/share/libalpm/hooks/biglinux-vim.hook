@@ -1,0 +1,9 @@
+[Trigger]
+Operation = Install
+Type = Package
+Target = vim
+
+[Action]
+Description = Apply custom configuration for Vim
+When = PostTransaction
+Exec = /bin/sh -c "/usr/share/libalpm/scripts/biglinux-install-vim"

@@ -1,0 +1,9 @@
+[Trigger]
+Operation = Remove
+Type = Package
+Target = vim
+
+[Action]
+Description = Remove custom configuration for Vim
+When = PostTransaction
+Exec = /bin/sh -c "rm -f /etc/vimrc"
