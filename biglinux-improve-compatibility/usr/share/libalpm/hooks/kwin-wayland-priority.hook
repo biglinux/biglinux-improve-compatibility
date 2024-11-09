@@ -1,0 +1,11 @@
+[Trigger]
+Type = Package
+Operation = Install
+Operation = Upgrade
+Target = biglinux-improve-compatibility
+Target = kwin
+
+[Action]
+Description = Change kwin_wayland priority
+When = PostTransaction
+Exec = /bin/sh -c '[[ -e /usr/lib/systemd/user/plasma-kwin_wayland.service ]] && kwriteconfig6 --file /usr/lib/systemd/user/plasma-kwin_wayland.service --group Service --key Nice -- -11'
