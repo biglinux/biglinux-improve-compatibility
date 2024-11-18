@@ -10,7 +10,6 @@ filetype plugin indent on
 set noincsearch                        " Disables incremental search; highlights only on Enter
 set ignorecase                         " Ignores case in search patterns
 set encoding=utf8                      " Sets file encoding to UTF-8
-set paste                              " Enables paste mode, preventing auto-indentation when pasting code
 set laststatus=2                       " Always display the status line at the bottom
 set hlsearch                           " Highlights all matches in search results
 
@@ -33,24 +32,15 @@ function YamlConfig()
         " with custom indent keys
 endfunction
 
-" Function to display whether paste mode is on or off in the status line
-function! HasPaste()
-        if &paste
-                return "PASTE MODE ON "   " Shows "PASTE MODE ON " if paste mode is active
-        else
-                return "PASTE MODE OFF "  " Shows "PASTE MODE OFF " if paste mode is inactive
-        endif
-endfunction
-
 " Autocommands for automatic behavior
-autocmd CursorHoldI * stopinsert       " Exits Insert mode if cursor is idle for "updatetime" duration
+autocmd CursorHoldI * stopinsert       " Exits Insert mode if cursor is idle for updatetime duration
 autocmd FileType html call HtmlConfig()   " Applies HtmlConfig() for HTML files
 autocmd FileType python call PythonConfig() " Applies PythonConfig() for Python files
 autocmd FileType yaml,yml call YamlConfig() " Applies YamlConfig() for YAML files
 
 " Status line configuration to show paste mode status, file information, working directory, 
 " and cursor position details
-set statusline=\ %{HasPaste()}\ File:\ %F%m%r%h\ %w\ \ Working\ Directory:\ %r%{getcwd()}%h\ -\ Line:\ %l\ -\ Column:\ %c
+set statusline=\ File:\ %F%m%r%h\ %w\ \ Working\ Directory:\ %r%{getcwd()}%h\ -\ Line:\ %l\ -\ Column:\ %c
 '
 
 # Check if the configuration is already in /etc/vimrc to avoid duplication
