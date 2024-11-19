@@ -13,6 +13,12 @@ set encoding=utf8                      " Sets file encoding to UTF-8
 set laststatus=2                       " Always display the status line at the bottom
 set hlsearch                           " Highlights all matches in search results
 
+" Enables mouse support if available
+if has("mouse")
+    set mouse=v
+endif
+
+
 " Configures indentation settings specifically for HTML files
 function HtmlConfig()
         set tabstop=2 softtabstop=2 expandtab shiftwidth=2
@@ -41,10 +47,8 @@ autocmd FileType yaml,yml call YamlConfig() " Applies YamlConfig() for YAML file
 " Status line configuration to show paste mode status, file information, working directory, 
 " and cursor position details
 set statusline=\ File:\ %F%m%r%h\ %w\ \ Working\ Directory:\ %r%{getcwd()}%h\ -\ Line:\ %l\ -\ Column:\ %c
+" Prevents defaults.vim from overwriting these settings
+let g:skip_defaults_vim = 1
 '
-
-# Check if the configuration is already in /etc/vimrc to avoid duplication
-if ! grep -q "Enables syntax highlighting and filetype-based plugin and indentation settings" /etc/vimrc 2>/dev/null; then
-    echo "$vim_config" >> /etc/vimrc
-fi
-
+# Overwrite /etc/vimrc with the desired configuration
+echo "$vim_config" > /etc/vimrc
