@@ -5,11 +5,24 @@ if ! getent group docker > /dev/null; then
 fi
 
 for user in $(awk -F':' '{ if ($3 >= 1000 && $1 != "nobody") print $1 }' /etc/passwd); do
-    usermod -aG docker "$user"
+    if ! id -nG "$user" | grep -qw docker; then
+        usermod -aG docker "$user"
+    fi
 done
 
-systemctl daemon-reload
-systemctl start docker.service
-systemctl enable docker.service
+if grep -q "LimitNOFILE=infinity" /lib/systemd/system/containerd.service; then
+    sed -i "/LimitNOFILE=/s/infinity/1048576/" /lib/systemd/system/containerd.service
+fi
 
-newgrp docker
+if ! systemctl is-active --quiet docker; then
+    systemctl enable docker
+    systemctl start docker
+fi
+
+if ! id -nG "$(id -un)" | grep -qw docker; then
+    usermod -aG docker "$(id -un)"
+fi
+
+if [ "$(stat -c %a /var/run/docker.sock 2>/dev/null)" != "666" ]; then
+    chmod 666 /var/run/docker.sock
+fi
