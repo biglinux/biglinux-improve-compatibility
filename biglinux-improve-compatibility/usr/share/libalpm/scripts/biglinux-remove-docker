@@ -1,0 +1,16 @@
+#!/bin/bash
+
+if pacman -Qi docker &> /dev/null; then
+    echo "Docker is installed. The docker.service will not be disabled."
+else
+    if systemctl list-unit-files | grep -qw docker.service; then
+        echo "Disabling docker.service..."
+        systemctl disable docker.service > /dev/null
+    fi
+fi
+
+if getent group docker > /dev/null; then
+    echo "Removing docker group..."
+    groupdel docker > /dev/null
+fi
+
