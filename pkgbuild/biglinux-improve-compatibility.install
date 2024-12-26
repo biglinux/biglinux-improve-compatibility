@@ -11,6 +11,7 @@ post_install() {
 
 pre_remove() {
     systemctl disable biglinux-improve-compatibility
+    systemctl disable suspend-bluetooth-fix
 } 
 
 post_upgrade() {
