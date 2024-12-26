@@ -1,6 +1,8 @@
 post_install() {
     systemctl enable biglinux-improve-compatibility
     systemctl start biglinux-improve-compatibility
+    systemctl enable suspend-bluetooth-fix
+    systemctl start suspend-bluetooth-fix
     systemctl --global enable big-execute-after-user-login
     if [[ ! -e /etc/sysctl.d/90-sysrq.conf ]]; then
        echo 'kernel.sysrq = 502'  > /etc/sysctl.d/90-sysrq.conf
@@ -13,6 +15,8 @@ pre_remove() {
 
 post_upgrade() {
     systemctl --global enable big-execute-after-user-login
+    systemctl enable suspend-bluetooth-fix
+    systemctl start suspend-bluetooth-fix
     if [[ ! -e /etc/sysctl.d/90-sysrq.conf ]]; then
        echo 'kernel.sysrq = 502'  > /etc/sysctl.d/90-sysrq.conf
     fi

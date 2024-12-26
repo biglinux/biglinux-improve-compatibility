@@ -1,0 +1,14 @@
+# From https://github.com/alimert-t/suspend-freeze-fix-for-mt7921e/tree/main
+[Unit]
+Description=Disable Bluetooth before sleep and enable it after wake
+Before=sleep.target
+StopWhenUnneeded=yes
+
+[Service]
+Type=oneshot
+ExecStop=rfkill unblock bluetooth
+ExecStart=rfkill block bluetooth
+RemainAfterExit=yes
+
+[Install]
+WantedBy=suspend.target hibernate.target hybrid-sleep.target suspend-then-hibernate.target multi-user.target
