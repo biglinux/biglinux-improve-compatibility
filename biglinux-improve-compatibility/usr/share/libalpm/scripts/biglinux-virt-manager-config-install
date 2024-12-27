@@ -25,10 +25,6 @@ if [ -e /etc/qemu/bridge.conf ] && [ -z "$(grep 'allow all' /etc/qemu/bridge.con
     echo "allow all" | tee -a /etc/qemu/bridge.conf > /dev/null
 fi
 
-# Starta o libvirtd
-# systemctl start virtqemud.service
-systemctl start libvirtd.service
-
 # Configura, starta e coloca no autostart a rede do libvirt
 network=$(LANG=C virsh net-list | grep default)
 if [ -z "$network" ];then
@@ -43,6 +39,5 @@ if [ "$(awk '{print $3}' <<< $network)" != "yes" ];then
     virsh net-autostart default
 fi
 
-# Habilita o libvirtd para iniciar no boot
-# systemctl enable virtqemud.service
-systemctl enable libvirtd.service
+# Enable and start libvirtd
+systemctl enable --now libvirtd.service
