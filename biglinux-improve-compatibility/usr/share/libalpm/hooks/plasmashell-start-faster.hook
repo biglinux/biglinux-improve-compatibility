@@ -8,4 +8,4 @@ Target = plasma-workspace
 [Action]
 Description = Start plasmashell faster
 When = PostTransaction
-Exec = /bin/sh -c '[[ -e /usr/lib/systemd/user/plasma-kcminit.service ]] && sed -i "s|Type=simple|Type=forking|g" /usr/lib/systemd/user/plasma-kcminit.service'
+Exec = /bin/sh -c 'if [ "$XDG_CURRENT_DESKTOP" = "KDE" ] || [ -f "/usr/share/xsessions/plasma.desktop" ]; then [[ -e /usr/lib/systemd/user/plasma-kcminit.service ]] && sed -i "s|Type=simple|Type=forking|g" /usr/lib/systemd/user/plasma-kcminit.service; fi'
