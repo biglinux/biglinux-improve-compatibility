@@ -20,13 +20,6 @@ if [ -n "$(ip -o -4 a | grep $libvirtNetRange)" ]; then
     sed -i "s/$libvirtNetRange/$newLibvirtNetRange/g" /etc/libvirt/qemu/networks/default.xml
 fi
 
-# firewallBackend=$(awk '/^firewall_backend/ { gsub(/"/, "", $3); print $3 }' /etc/libvirt/network.conf)
-# if [ "$firewallBackend" != "iptables" ];then
-#     sed -i '/^firewall_backend/d' /etc/libvirt/network.conf
-#     echo 'firewall_backend = "iptables"' | tee -a /etc/libvirt/network.conf > /dev/null
-#     systemctl restart libvirtd.service
-# fi
-
 # Aceita bridge em todas as redes
 if [ -e /etc/qemu/bridge.conf ] && [ -z "$(grep 'allow all' /etc/qemu/bridge.conf)" ]; then
     echo "allow all" | tee -a /etc/qemu/bridge.conf > /dev/null
