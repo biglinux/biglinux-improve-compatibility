@@ -15,12 +15,6 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-msgid "This system uses pamac to manage packages."
-msgstr "This system uses pamac to manage packages."
-
-msgid "Redirecting your command to the pamac command"
-msgstr "Redirecting your command to the pamac command"
-
 msgid "Necessary to install <b>jre8</b>"
 msgstr "Necessary to install <b>jre8</b>"
 
@@ -29,3 +23,9 @@ msgstr "Cancel"
 
 msgid "Install"
 msgstr "Install"
+
+msgid "This system uses pamac to manage packages."
+msgstr "This system uses pamac to manage packages."
+
+msgid "Redirecting your command to the pamac command"
+msgstr "Redirecting your command to the pamac command"
