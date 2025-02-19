@@ -102,6 +102,8 @@ if [ ! -e "/usr/lib/libabsl_log_internal_message.so.2301.0.0" ]; then
     ln -s /usr/lib/libabsl_log_internal_message.so /usr/lib/libabsl_log_internal_message.so.2301.0.0 2> /dev/null
 fi
 
-
+if [ ! -e "/usr/lib//usr/lib/libusbmuxd-2.0.so.6" ]; then
+    ln -s /usr/lib/libusbmuxd-2.0.so /usr/lib/libusbmuxd-2.0.so.6 2> /dev/null
+fi
 
 exit 0
