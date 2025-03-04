@@ -1,0 +1,11 @@
+[Trigger]
+Type = Package
+Operation = Install
+Operation = Upgrade
+Target = biglinux-improve-compatibility
+
+[Action]
+Description = Remove Manjaro community repository in pacman
+When = PostTransaction
+Exec = /bin/sh -c 'sed -i "/\[community\]/{N;N;N;d;}" /etc/pacman.conf'
+
