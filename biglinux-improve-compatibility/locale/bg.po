@@ -3,7 +3,6 @@
 # This file is distributed under the same license as the biglinux-improve-compatibility package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 # 
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: biglinux-improve-compatibility\n"
@@ -15,18 +14,13 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: attranslate\n"
-
 msgid "Necessary to install <b>jre8</b>"
 msgstr "Необходимо е да инсталирате <b>jre8</b>"
-
 msgid "Cancel"
 msgstr "Отказ"
-
 msgid "Install"
 msgstr "Инсталиране"
-
 msgid "This system uses pamac to manage packages."
 msgstr "Тази система използва pamac за управление на пакети."
-
 msgid "Redirecting your command to the pamac command"
 msgstr "Пренасочване на командата към командата pamac"

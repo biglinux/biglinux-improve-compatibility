@@ -3,7 +3,6 @@
 # This file is distributed under the same license as the biglinux-improve-compatibility package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 # 
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: biglinux-improve-compatibility\n"
@@ -15,18 +14,13 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: attranslate\n"
-
 msgid "Necessary to install <b>jre8</b>"
 msgstr "Necesară instalarea <b>jre8</b>"
-
 msgid "Cancel"
 msgstr "Anulare"
-
 msgid "Install"
 msgstr "Instalare"
-
 msgid "This system uses pamac to manage packages."
 msgstr "Acest sistem folosește pamac pentru gestionarea pachetelor."
-
 msgid "Redirecting your command to the pamac command"
 msgstr "Redirecționez comanda ta către comanda pamac"
