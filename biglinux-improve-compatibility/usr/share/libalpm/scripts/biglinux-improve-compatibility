@@ -38,6 +38,9 @@ done
 if [ -e "/usr/share/hplip/base/password.py" ]; then
     sed -i "s|os_name = platform.dist()\[0]|os_name = 'manjarolinux'|g" /usr/share/hplip/base/password.py 2> /dev/null
 fi
+if [ -e "/usr/share/hplip/base/utils.py" ]; then
+    sed -i.bak -E "/def get_distro_name/,/^def /s/(^\s*ver = .+)/\1\n\1.replace('-', '.')/" /usr/share/hplip/base/utils.py
+fi
 
 if [ -e "/usr/lib/libicuio.so" ]; then
     ln -s /usr/lib/libicuio.so /usr/lib/libicuio.so.suse65.1 2> /dev/null
