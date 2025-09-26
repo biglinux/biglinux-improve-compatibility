@@ -4,7 +4,6 @@ post_install() {
     systemctl enable suspend-bluetooth-fix
     systemctl start suspend-bluetooth-fix
     systemctl enable glibc2-41-fix
-    systemctl start glibc2-41-fix
     systemctl --global enable big-execute-after-user-login
     if [[ ! -e /etc/sysctl.d/90-sysrq.conf ]]; then
        echo 'kernel.sysrq = 502'  > /etc/sysctl.d/90-sysrq.conf
@@ -28,7 +27,6 @@ post_upgrade() {
     systemctl enable suspend-bluetooth-fix
     systemctl start suspend-bluetooth-fix
     systemctl enable glibc2-41-fix
-    systemctl start glibc2-41-fix
     if [[ ! -e /etc/sysctl.d/90-sysrq.conf ]]; then
        echo 'kernel.sysrq = 502'  > /etc/sysctl.d/90-sysrq.conf
     fi
