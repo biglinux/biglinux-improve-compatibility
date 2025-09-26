@@ -2,8 +2,6 @@
 Description=Fix apps broken with this bug: https://sourceware.org/bugzilla/show_bug.cgi?id=32653
 
 [Path]
-SystemCallArchitectures=native
-PathExists=/usr/local/bin/warsaw/core
 PathModified=/usr/local/bin/warsaw/core
 Unit=glibc2-41-fix.service
 
