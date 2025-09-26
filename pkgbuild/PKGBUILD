@@ -1,7 +1,7 @@
 # Maintainer: Bruno Goncalves <bigbruno@gmail.com>
 
 pkgname=biglinux-improve-compatibility
-pkgver=$(date +%y.%m.%d)
+pkgver=$(date +%y.%m.%d_1)
 pkgrel=$(date +%H%M)
 arch=('any')
 license=('GPL')
@@ -12,7 +12,8 @@ replaces=('wxwidgets3.0')
 makedepends=('git')
 url="https://github.com/biglinux/biglinux-improve-compatibility"
 pkgdesc="Compatibility improvements to make it easier to use packages compiled through the AUR"
-source=("git+https://github.com/biglinux/biglinux-improve-compatibility.git")
+source=("git+https://github.com/biglinux/biglinux-improve-compatibility.git") # From git
+#source=("git+file:///${PWD%/*}") # Local files
 md5sums=(SKIP)
 install=biglinux-improve-compatibility.install
 
