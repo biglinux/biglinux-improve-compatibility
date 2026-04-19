@@ -1,17 +1,19 @@
 #!/bin/bash
 
-# Check if the file '/usr/lib/kscreenlocker_greet' is an executable (by MIME type)
-if file --mime-type /usr/lib/kscreenlocker_greet | grep executable; then
+# Only wrap the original binary once. We detect this by checking that
+# /usr/lib/kscreenlocker_greet is still an ELF executable.
+if [ -x /usr/lib/kscreenlocker_greet ] && file --mime-type /usr/lib/kscreenlocker_greet | grep -Eq 'application/x-(pie-)?executable'; then
 
-    # Move the original 'kscreenlocker_greet' to a backup with the suffix '_orig'
+    # Keep a backup of the original binary so the wrapper can delegate to it.
     mv -f /usr/lib/kscreenlocker_greet /usr/lib/kscreenlocker_greet_orig
 
-    # Define a new shell script content using heredoc (no variable expansion inside)
-    read -d $'' ShowText <<'EOF'
+    # Install a small wrapper script. The single-quoted heredoc prevents
+    # accidental variable expansion while generating the file.
+    cat <<'EOF' > /usr/lib/kscreenlocker_greet
 #!/bin/sh
 
-# Check if the process 'kwin_wayland' is running using 'ps' and grep (avoiding self-match)
-if ps -aux | grep -q 'bin/[k]win_wayland'; then
+# Check if the process 'kwin_wayland' is running
+if pgrep -f 'bin/kwin_wayland' >/dev/null 2>&1; then
     # If running under Wayland, send a SIGHUP signal to the original kscreenlocker_greet
     killall -1 kscreenlocker_greet_orig
     # Invoke the original binary to lock the screen immediately, sleep for 1 second, and re-lock
@@ -20,11 +22,9 @@ if ps -aux | grep -q 'bin/[k]win_wayland'; then
     /usr/lib/kscreenlocker_greet_orig --immediateLock
 else
     # If not under Wayland, call the original binary with any passed arguments
-    /usr/lib/kscreenlocker_greet_orig $*
+    /usr/lib/kscreenlocker_greet_orig "$@"
 fi
 EOF
-    # Write the new script content to replace '/usr/lib/kscreenlocker_greet'
-    echo "$ShowText" > /usr/lib/kscreenlocker_greet
     chmod +x /usr/lib/kscreenlocker_greet
 fi
 

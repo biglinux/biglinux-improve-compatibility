@@ -8,4 +8,4 @@ Target = networkmanager
 [Action]
 Description = Disables the need for parts of the system like Sddm to wait for Network Manager to finish running
 When = PostTransaction
-Exec = /bin/sh -c 'sed -i "s|Type=dbus|Type=simple|g" /usr/lib/systemd/system/NetworkManager.service'
+Exec = /bin/sh -c '[ -e /usr/lib/systemd/system/NetworkManager.service ] && sed -i "s|Type=dbus|Type=simple|g" /usr/lib/systemd/system/NetworkManager.service'

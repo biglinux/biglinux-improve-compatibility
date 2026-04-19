@@ -1,40 +1,58 @@
 #!/bin/bash
 
-#Change StartLimitBurst to 20, in one minute, when change theme from BigLinux panel count one Burst
+# Create a compatibility symlink only when:
+# 1) the source library exists and
+# 2) the compatibility name does not already exist.
+# This keeps the script idempotent and safe to run multiple times.
+create_compat_symlink() {
+    local source_path="$1"
+    local target_path="$2"
+
+    if [ -e "$source_path" ] && [ ! -e "$target_path" ]; then
+        ln -s "$source_path" "$target_path" 2> /dev/null || true
+    fi
+}
+
+# Increase StartLimitBurst to avoid plasmashell rate-limiting while themes are
+# changing and restarting the shell repeatedly in a short period.
 if [ -e "/usr/lib/systemd/user/plasma-plasmashell.service" ]; then
     sed -i 's|StartLimitBurst=3$|StartLimitBurst=20|g' /usr/lib/systemd/user/plasma-plasmashell.service
 fi
 
-for i  in  $(ls /usr/lib/modules | grep -v extramodules 2> /dev/null); do
+# For each installed kernel, keep legacy header and version links in sync.
+# Some third-party packages still expect these historical paths.
+for module_dir in /usr/lib/modules/*; do
+    [ -d "$module_dir" ] || continue
 
-    if [ -e "/lib/modules/${i}/build" ]; then
+    kernel_version="${module_dir##*/}"
+    [ "$kernel_version" = "extramodules" ] && continue
 
-        if [ ! -e "/usr/src/linux-headers-${i}" ]; then
-            ln -sf "/lib/modules/${i}/build" "/usr/src/linux-headers-${i}" 2> /dev/null
+    if [ -e "/lib/modules/$kernel_version/build" ]; then
+
+        if [ ! -e "/usr/src/linux-headers-$kernel_version" ]; then
+            ln -sf "/lib/modules/$kernel_version/build" "/usr/src/linux-headers-$kernel_version" 2> /dev/null
         fi
 
-        if [ ! -e "/usr/lib/modules/${i}/build/version" ]; then
-            ln -s "/usr/lib/modules/${i}/extramodules/version" "/usr/lib/modules/${i}/build/version" 2> /dev/null
+        if [ ! -e "/usr/lib/modules/$kernel_version/build/version" ] && [ -e "/usr/lib/modules/$kernel_version/extramodules/version" ]; then
+            ln -s "/usr/lib/modules/$kernel_version/extramodules/version" "/usr/lib/modules/$kernel_version/build/version" 2> /dev/null
         fi
         
-        # Remove if link is broken
-        if [ ! -e "/lib/modules/${i}/build/version" ]; then
-            rm -f /lib/modules/${i}/build/version
+        # Clean dangling symlinks so future runs can rebuild them correctly.
+        if [ ! -e "/lib/modules/$kernel_version/build/version" ]; then
+            rm -f "/lib/modules/$kernel_version/build/version"
         fi
 
-        # Remove if link is broken
-        if [ ! -e "/usr/src/linux-headers-${i}" ]; then
-            rm -f /usr/src/linux-headers-${i}
+        if [ ! -e "/usr/src/linux-headers-$kernel_version" ]; then
+            rm -f "/usr/src/linux-headers-$kernel_version"
         fi
 
-        # Remove folder if empty
-        rmdir --ignore-fail-on-non-empty /lib/modules/${i}/build
-        rmdir --ignore-fail-on-non-empty /lib/modules/${i}
-
-        
+        # Remove empty leftover directories from partial or broken setups.
+        rmdir --ignore-fail-on-non-empty "/lib/modules/$kernel_version/build" 2> /dev/null || true
+        rmdir --ignore-fail-on-non-empty "/lib/modules/$kernel_version" 2> /dev/null || true
     fi
 done
 
+# Patch HPLIP distro detection to avoid false negatives on Manjaro-based systems.
 if [ -e "/usr/share/hplip/base/password.py" ]; then
     sed -i "s|os_name = platform.dist()\[0]|os_name = 'manjarolinux'|g" /usr/share/hplip/base/password.py 2> /dev/null
 fi
@@ -43,70 +61,25 @@ if [ -e "/usr/share/hplip/base/utils.py" ]; then
 fi
 
 if [ -e "/usr/lib/libicuio.so" ]; then
-    ln -s /usr/lib/libicuio.so /usr/lib/libicuio.so.suse65.1 2> /dev/null
-    ln -s /usr/lib/libicui18n.so /usr/lib/libicui18n.so.suse65.1 2> /dev/null
-    ln -s /usr/lib/libicuuc.so /usr/lib/libicuuc.so.suse65.1 2> /dev/null
-    ln -s /usr/lib/libicudata.so /usr/lib/libicudata.so.suse65.1 2> /dev/null
+    create_compat_symlink /usr/lib/libicuio.so /usr/lib/libicuio.so.suse65.1
+    create_compat_symlink /usr/lib/libicui18n.so /usr/lib/libicui18n.so.suse65.1
+    create_compat_symlink /usr/lib/libicuuc.so /usr/lib/libicuuc.so.suse65.1
+    create_compat_symlink /usr/lib/libicudata.so /usr/lib/libicudata.so.suse65.1
 fi
 
-if [ ! -e "/usr/lib/libmpv.so.1" ]; then
-    ln -s /usr/lib/libmpv.so /usr/lib/libmpv.so.1 2> /dev/null
-fi
-
-if [ ! -e "/usr/lib/libvpx.so.7" ]; then
-    ln -s /usr/lib/libvpx.so /usr/lib/libvpx.so.7 2> /dev/null
-fi
-
-if [ ! -e "/usr/lib/libvpx.so.8" ]; then
-    ln -s /usr/lib/libvpx.so /usr/lib/libvpx.so.8 2> /dev/null
-fi
-
-if [ ! -e "/usr/lib/libjxl.so.0.8" ]; then
-    ln -s /usr/lib/libjxl.so /usr/lib/libjxl.so.0.8 2> /dev/null
-fi
-
-if [ ! -e "/usr/lib/libjxl_threads.so.0.8" ]; then
-    ln -s /usr/lib/libjxl_threads.so /usr/lib/libjxl_threads.so.0.8 2> /dev/null
-fi
-
-if [ ! -e "/usr/lib/libtiff.so.5" ]; then
-    ln -s /usr/lib/libtiff.so /usr/lib/libtiff.so.5 2> /dev/null
-fi
-
-if [[ ! -e "/usr/lib/libdav1d.so.6" && -e "/usr/lib/libdav1d.so" ]]; then
-    ln -s /usr/lib/libdav1d.so /usr/lib/libdav1d.so.6 2> /dev/null
-fi
-
-if [[ ! -e "/usr/lib/librav1e.so.0.6" && -e "/usr/lib/libdav1d.so" ]]; then
-    ln -s /usr/lib/libdav1d.so /usr/lib/librav1e.so.0.6 2> /dev/null
-fi
-
-if [[ ! -e "/usr/lib/libglslang.so.13" && -e "/usr/lib/libglslang.so" ]]; then
-    ln -s /usr/lib/libglslang.so /usr/lib/libglslang.so.13 2> /dev/null
-fi
-
-if [[ ! -e "/usr/lib/libSPIRV.so.13" && -e "/usr/lib/libSPIRV.so" ]]; then
-    ln -s /usr/lib/libSPIRV.so /usr/lib/libSPIRV.so.13 2> /dev/null
-fi
-
-if [ ! -e "/usr/lib/libprotobuf.so.23" ]; then
-    ln -s /usr/lib/libprotobuf.so /usr/lib/libprotobuf.so.23 2> /dev/null
-fi
-
-if [ ! -e "/usr/lib/libprotobuf.so.23" ]; then
-    ln -s /usr/lib/libprotobuf.so /usr/lib/libprotobuf.so.23 2> /dev/null
-fi
-
-if [ ! -e "/usr/lib/libabsl_log_internal_check_op.so.2301.0.0" ]; then
-    ln -s /usr/lib/libabsl_log_internal_check_op.so /usr/lib/libabsl_log_internal_check_op.so.2301.0.0 2> /dev/null
-fi
-
-if [ ! -e "/usr/lib/libabsl_log_internal_message.so.2301.0.0" ]; then
-    ln -s /usr/lib/libabsl_log_internal_message.so /usr/lib/libabsl_log_internal_message.so.2301.0.0 2> /dev/null
-fi
-
-if [ ! -e "/usr/lib//usr/lib/libusbmuxd-2.0.so.6" ]; then
-    ln -s /usr/lib/libusbmuxd-2.0.so /usr/lib/libusbmuxd-2.0.so.6 2> /dev/null
-fi
+create_compat_symlink /usr/lib/libmpv.so /usr/lib/libmpv.so.1
+create_compat_symlink /usr/lib/libvpx.so /usr/lib/libvpx.so.7
+create_compat_symlink /usr/lib/libvpx.so /usr/lib/libvpx.so.8
+create_compat_symlink /usr/lib/libjxl.so /usr/lib/libjxl.so.0.8
+create_compat_symlink /usr/lib/libjxl_threads.so /usr/lib/libjxl_threads.so.0.8
+create_compat_symlink /usr/lib/libtiff.so /usr/lib/libtiff.so.5
+create_compat_symlink /usr/lib/libdav1d.so /usr/lib/libdav1d.so.6
+create_compat_symlink /usr/lib/libdav1d.so /usr/lib/librav1e.so.0.6
+create_compat_symlink /usr/lib/libglslang.so /usr/lib/libglslang.so.13
+create_compat_symlink /usr/lib/libSPIRV.so /usr/lib/libSPIRV.so.13
+create_compat_symlink /usr/lib/libprotobuf.so /usr/lib/libprotobuf.so.23
+create_compat_symlink /usr/lib/libabsl_log_internal_check_op.so /usr/lib/libabsl_log_internal_check_op.so.2301.0.0
+create_compat_symlink /usr/lib/libabsl_log_internal_message.so /usr/lib/libabsl_log_internal_message.so.2301.0.0
+create_compat_symlink /usr/lib/libusbmuxd-2.0.so /usr/lib/libusbmuxd-2.0.so.6
 
 exit 0

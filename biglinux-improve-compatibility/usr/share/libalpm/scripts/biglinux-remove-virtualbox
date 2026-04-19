@@ -1,10 +1,20 @@
 #!/bin/bash
 
+# Remove all users from vboxusers before deleting the group.
 if getent group vboxusers > /dev/null; then
-    for USER in $(getent group vboxusers | cut -d: -f4 | tr ',' ' '); do
-        gpasswd -d "$USER" vboxusers
+    members="$(getent group vboxusers | awk -F: '{print $4}')"
+    IFS=',' read -r -a member_list <<< "$members"
+
+    for user in "${member_list[@]}"; do
+        [ -n "$user" ] || continue
+        gpasswd -d "$user" vboxusers > /dev/null 2>&1 || true
     done
-    groupdel vboxusers
+    groupdel vboxusers > /dev/null 2>&1 || true
 fi
 
-rmmod vboxnetflt vboxnetadp vboxdrv
+# Unload VirtualBox kernel modules only when they are currently loaded.
+for module in vboxnetflt vboxnetadp vboxdrv; do
+    if grep -q "^$module " /proc/modules 2> /dev/null; then
+        rmmod "$module" > /dev/null 2>&1 || true
+    fi
+done

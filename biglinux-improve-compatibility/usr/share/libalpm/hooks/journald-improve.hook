@@ -7,5 +7,4 @@ Target = biglinux-improve-compatibility
 [Action]
 Description = Stop all processes when logout
 When = PostTransaction
-Exec = /bin/sh -c 'sed -i "s/SystemMaxUse=5M/SystemMaxUse=50M/" /etc/systemd/journald.conf'
-
+Exec = /bin/sh -c '[ -e /etc/systemd/journald.conf ] && sed -i "s/SystemMaxUse=5M/SystemMaxUse=50M/" /etc/systemd/journald.conf'

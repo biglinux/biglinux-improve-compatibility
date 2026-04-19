@@ -1,16 +1,18 @@
 #!/bin/bash
 
+# If Docker is still installed, keep the service state untouched.
 if pacman -Qi docker &> /dev/null; then
     echo "Docker is installed. The docker.service will not be disabled."
 else
+    # Disable the unit only when it exists on this system.
     if systemctl list-unit-files | grep -qw docker.service; then
         echo "Disabling docker.service..."
         systemctl disable docker.service > /dev/null
     fi
 fi
 
+# Remove the docker group when it exists.
 if getent group docker > /dev/null; then
     echo "Removing docker group..."
     groupdel docker > /dev/null
 fi
-

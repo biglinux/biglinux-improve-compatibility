@@ -1,3 +1,6 @@
 #!/bin/bash
 
-systemctl disable --now php-fpm.service
+if [ -e /usr/lib/systemd/system/php-fpm.service ] || [ -e /etc/systemd/system/php-fpm.service ]; then
+    systemctl disable php-fpm.service > /dev/null 2>&1 || true
+    systemctl stop php-fpm.service > /dev/null 2>&1 || true
+fi

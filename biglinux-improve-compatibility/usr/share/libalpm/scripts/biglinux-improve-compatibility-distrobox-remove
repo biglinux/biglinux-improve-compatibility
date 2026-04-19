@@ -1,5 +1,6 @@
 #!/usr/bin/bash
 
-if [ -d "/etc/distrobox/" ];then
+# Remove the config directory created by the install helper.
+if [ -d "/etc/distrobox/" ]; then
   rm -rf "/etc/distrobox/"
 fi

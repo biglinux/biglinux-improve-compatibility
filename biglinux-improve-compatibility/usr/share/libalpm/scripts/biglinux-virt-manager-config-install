@@ -1,23 +1,37 @@
 #!/usr/bin/bash
 
-# Adiciona os grupos libvirt e libvirt-qemu a todos usuarios acima de 1000
-for user in $(awk -F':' '{ if ($3 >= 1000 && $1 != "nobody") print $1 }' /etc/passwd); do
-    usermod -a -G libvirt $user
-    usermod -a -G libvirt-qemu $user
-    sudo -u $user XDG_RUNTIME_DIR=/run/user/$(id -u $user) gsettings set org.virt-manager.virt-manager xmleditor-enabled true
-    sudo -u $user XDG_RUNTIME_DIR=/run/user/$(id -u $user) gsettings set org.virt-manager.virt-manager system-tray true
-done
+# Add libvirt-related groups for regular users (UID >= 1000).
+while IFS=: read -r user _ uid _ _ _ _; do
+    [ "$uid" -ge 1000 ] || continue
+    [ "$user" = "nobody" ] && continue
 
-# Backup do default.xml
-if [ ! -e "/etc/libvirt/qemu/networks/default.xml.bkp" ] && [ -e "/etc/libvirt/qemu/networks/default.xml" ];then
+    usermod -a -G libvirt "$user"
+    usermod -a -G libvirt-qemu "$user"
+
+    # gsettings requires a valid user runtime directory. If the user is not
+    # logged in, the directory may not exist and we skip this step gracefully.
+    if command -v gsettings > /dev/null 2>&1; then
+        runtime_dir="/run/user/$(id -u "$user")"
+        if [ -d "$runtime_dir" ]; then
+            sudo -u "$user" XDG_RUNTIME_DIR="$runtime_dir" gsettings set org.virt-manager.virt-manager xmleditor-enabled true > /dev/null 2>&1 || true
+            sudo -u "$user" XDG_RUNTIME_DIR="$runtime_dir" gsettings set org.virt-manager.virt-manager system-tray true > /dev/null 2>&1 || true
+        fi
+    fi
+done < /etc/passwd
+
+# Keep a backup of the default network definition before editing it.
+if [ ! -e "/etc/libvirt/qemu/networks/default.xml.bkp" ] && [ -e "/etc/libvirt/qemu/networks/default.xml" ]; then
     cp /etc/libvirt/qemu/networks/default.xml /etc/libvirt/qemu/networks/default.xml.bkp
 fi
 
-# Verifica se o range de ip usado pelo libvirt não está sendo usado por outro rede
-libvirtNetRange=$(grep -oP "(?<=ip address=')[0-9]+\.[0-9]+\.[0-9]+" /etc/libvirt/qemu/networks/default.xml)
-if [ -n "$(ip -o -4 a | grep $libvirtNetRange)" ]; then
-    newLibvirtNetRange=$(awk -F. '{print $1 "." $2 "." $3+1}' <<< $libvirtNetRange)
-    sed -i "s/$libvirtNetRange/$newLibvirtNetRange/g" /etc/libvirt/qemu/networks/default.xml
+# If the default libvirt subnet already exists on another interface,
+# shift the third octet to reduce network collisions.
+if [ -e "/etc/libvirt/qemu/networks/default.xml" ]; then
+    libvirt_net_prefix="$(grep -oPm1 "(?<=ip address=')[0-9]+\.[0-9]+\.[0-9]+" /etc/libvirt/qemu/networks/default.xml)"
+    if [ -n "$libvirt_net_prefix" ] && ip -o -4 a | grep -Fq "$libvirt_net_prefix."; then
+        new_libvirt_net_prefix="$(awk -F. '{print $1 "." $2 "." $3+1}' <<< "$libvirt_net_prefix")"
+        sed -i "s/$libvirt_net_prefix/$new_libvirt_net_prefix/g" /etc/libvirt/qemu/networks/default.xml
+    fi
 fi
 
 # firewallBackend=$(awk '/^firewall_backend/ { gsub(/"/, "", $3); print $3 }' /etc/libvirt/network.conf)
@@ -27,29 +41,35 @@ fi
 #     systemctl restart libvirtd.service
 # fi
 
-# Aceita bridge em todas as redes
-if [ -e /etc/qemu/bridge.conf ] && [ -z "$(grep 'allow all' /etc/qemu/bridge.conf)" ]; then
+# Allow bridging on all host interfaces when bridge.conf exists.
+if [ -e /etc/qemu/bridge.conf ] && ! grep -q 'allow all' /etc/qemu/bridge.conf; then
     echo "allow all" | tee -a /etc/qemu/bridge.conf > /dev/null
 fi
 
-# Starta o libvirtd
+# Start libvirtd only when a unit file is present.
 # systemctl start virtqemud.service
-systemctl start libvirtd.service
-
-# Configura, starta e coloca no autostart a rede do libvirt
-network=$(LANG=C virsh net-list | grep default)
-if [ -z "$network" ];then
-    virsh net-define /etc/libvirt/qemu/networks/default.xml
-fi
-network=$(LANG=C virsh net-list | grep default)
-if [ "$(awk '{print $2}' <<< $network)" != "active" ];then
-    virsh net-start default
-fi
-network=$(LANG=C virsh net-list | grep default)
-if [ "$(awk '{print $3}' <<< $network)" != "yes" ];then
-    virsh net-autostart default
+if [ -e /usr/lib/systemd/system/libvirtd.service ] || [ -e /etc/systemd/system/libvirtd.service ]; then
+    systemctl start libvirtd.service > /dev/null 2>&1 || true
 fi
 
-# Habilita o libvirtd para iniciar no boot
+# Define the default network if missing, then ensure it is active and autostarted.
+if command -v virsh > /dev/null 2>&1 && [ -e /etc/libvirt/qemu/networks/default.xml ]; then
+    if ! LANG=C virsh net-info default > /dev/null 2>&1; then
+        LANG=C virsh net-define /etc/libvirt/qemu/networks/default.xml > /dev/null 2>&1 || true
+    fi
+
+    if LANG=C virsh net-info default > /dev/null 2>&1; then
+        if ! LANG=C virsh net-info default | grep -q '^Active:.*yes'; then
+            LANG=C virsh net-start default > /dev/null 2>&1 || true
+        fi
+        if ! LANG=C virsh net-info default | grep -q '^Autostart:.*yes'; then
+            LANG=C virsh net-autostart default > /dev/null 2>&1 || true
+        fi
+    fi
+fi
+
+# Enable libvirtd on boot when the service unit exists.
 # systemctl enable virtqemud.service
-systemctl enable libvirtd.service
+if [ -e /usr/lib/systemd/system/libvirtd.service ] || [ -e /etc/systemd/system/libvirtd.service ]; then
+    systemctl enable libvirtd.service > /dev/null 2>&1 || true
+fi

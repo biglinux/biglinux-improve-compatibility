@@ -1,10 +1,13 @@
 #!/bin/bash
 
-cd /usr/src
+# Work inside /usr/src where linux-headers symlinks are managed.
+cd /usr/src || exit 0
 
-for i  in  linux-headers-*; do
+# Remove stale kernel header links left by previously installed kernels.
+for header_entry in linux-headers-*; do
+    [ -e "$header_entry" ] || continue
 
-    kernelrm=$(echo "$i" | sed 's|linux-headers-||g')
+    kernelrm="${header_entry#linux-headers-}"
     rm "/usr/src/linux-headers-$kernelrm" 2> /dev/null
     rm "/usr/lib/modules/$kernelrm/build/version" 2> /dev/null
 

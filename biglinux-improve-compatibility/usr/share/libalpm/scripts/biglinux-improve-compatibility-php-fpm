@@ -1,3 +1,6 @@
 #!/bin/bash
 
-systemctl enable --now php-fpm.service
+if [ -e /usr/lib/systemd/system/php-fpm.service ] || [ -e /etc/systemd/system/php-fpm.service ]; then
+    systemctl enable php-fpm.service > /dev/null 2>&1 || true
+    systemctl start php-fpm.service > /dev/null 2>&1 || true
+fi

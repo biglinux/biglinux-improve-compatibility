@@ -28,7 +28,8 @@ pre_remove() {
 
 
 pre_upgrade() {
-    # Disable before remove on upgrade this package
+    # Disable the old user unit before package replacement to avoid stale links
+    # during the remove/install phase of an upgrade transaction.
     if [[ -e /usr/lib/systemd/user/big-execute-after-user-login.service ]]; then
        systemctl --global disable big-execute-after-user-login
     fi

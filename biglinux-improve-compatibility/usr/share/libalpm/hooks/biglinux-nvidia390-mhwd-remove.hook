@@ -6,4 +6,4 @@ Target = mhwd-nvidia-390xx
 [Action]
 Description = Remove mhwd support for old nvidia 390.
 When = PostTransaction
-Exec = /bin/sh -c "rm /var/lib/mhwd/ids/pci/nvidia-390xx.ids"
+Exec = /bin/sh -c "rm -f /var/lib/mhwd/ids/pci/nvidia-390xx.ids"

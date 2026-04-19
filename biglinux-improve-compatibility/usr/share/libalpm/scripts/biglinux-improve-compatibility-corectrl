@@ -1,18 +1,31 @@
 #!/bin/bash
 
-#enable editing
-if [ -z "$(grep amdgpu.ppfeaturemask /etc/default/grub)" ];then
+# Enable advanced AMD tuning by appending the kernel parameter once.
+if ! grep -q "amdgpu.ppfeaturemask" /etc/default/grub 2> /dev/null; then
     sed -i '/GRUB_CMDLINE_LINUX_DEFAULT/s/\"/ amdgpu.ppfeaturemask=0xfffd7fff"/2' /etc/default/grub
-    update-grub
+    update-grub > /dev/null 2>&1 || true
 fi
 
-# list all normal users
-# user=$(who | awk 'NR==1{print $1}')
-users=$(eval getent passwd {$(awk '/^UID_MIN/ {print $2}' /etc/login.defs)..$(awk '/^UID_MAX/ {print $2}' /etc/login.defs)} | cut -d: -f1)
+# Read UID limits from login.defs to identify regular human users.
+uid_min="$(awk '/^UID_MIN/ {print $2; exit}' /etc/login.defs)"
+uid_max="$(awk '/^UID_MAX/ {print $2; exit}' /etc/login.defs)"
+[ -n "$uid_min" ] || uid_min=1000
+[ -n "$uid_max" ] || uid_max=60000
 
-for user in ${users[@]};do
-    #run without asking for password
-cat << EOF > /etc/polkit-1/rules.d/90-corectrl-$user.rules
+desktop_file="/usr/share/applications/org.corectrl.corectrl.desktop"
+skel_profile="/etc/skel/.config/corectrl/profiles/_global_.ccpro"
+
+while IFS=: read -r user _ uid _ _ home _; do
+    [ "$user" = "nobody" ] && continue
+    [ "$uid" -ge "$uid_min" ] && [ "$uid" -le "$uid_max" ] || continue
+    [ -d "$home" ] || continue
+    case "$home" in
+        /home/*|/var/home/*) ;;
+        *) continue ;;
+    esac
+
+    # Grant the selected CoreCtrl helper actions through Polkit for this user.
+cat << EOF > "/etc/polkit-1/rules.d/90-corectrl-$user.rules"
 polkit.addRule(function(action, subject) {
     if ((action.id == "org.corectrl.helper.init" ||
         action.id == "org.corectrl.helperkiller.init") &&
@@ -24,34 +37,39 @@ polkit.addRule(function(action, subject) {
 });
 EOF
 
-    #enable autostart
-    cp /usr/share/applications/org.corectrl.corectrl.desktop /home/$user/.config/autostart/org.corectrl.CoreCtrl.desktop
-    chown $user:$user /home/$user/.config/autostart/org.corectrl.CoreCtrl.desktop
+    config_dir="$home/.config"
+    autostart_dir="$config_dir/autostart"
+    corectrl_dir="$config_dir/corectrl"
+    profiles_dir="$corectrl_dir/profiles"
+    autostart_file="$autostart_dir/org.corectrl.CoreCtrl.desktop"
+    corectrl_ini="$corectrl_dir/corectrl.ini"
+    global_profile="$profiles_dir/_global_.ccpro"
 
-    # check and create configuration directory
-    if [ ! -d "/home/$user/.config/corectrl" ];then
-      mkdir -p /home/$user/.config/corectrl
-      chown $user:$user /home/$user/.config/corectrl
+    # Prepare all folders before writing any user configuration.
+    mkdir -p "$autostart_dir" "$profiles_dir"
+
+    # Copy desktop entry to autostart so CoreCtrl launches with the session.
+    if [ -e "$desktop_file" ]; then
+        cp "$desktop_file" "$autostart_file"
     fi
 
-    # check and create configuration directory
-    if [ ! -d "/home/$user/.config/corectrl/profiles" ];then
-      mkdir -p /home/$user/.config/corectrl/profiles
-      chown $user:$user /home/$user/.config/corectrl/profiles
-    fi
-
-    # check and create configuration file
-    if [ ! -e /home/$user/.config/corectrl/corectrl.ini ];then
-cat << EOF > /home/$user/.config/corectrl/corectrl.ini
+    # Create a default config only when the user does not already have one.
+    if [ ! -e "$corectrl_ini" ]; then
+cat << EOF > "$corectrl_ini"
 [General]
 startOnSysTray=true
 EOF
-    chown $user:$user /home/$user/.config/corectrl/corectrl.ini
     fi
 
-    # default config
-    if [ ! -e /home/$user/.config/corectrl/profiles/_global_.ccpro -a -e /etc/skel/.config/corectrl/profiles/_global_.ccpro ];then
-        cp /etc/skel/.config/corectrl/profiles/_global_.ccpro /home/$user/.config/corectrl/profiles/_global_.ccpro
-        chown $user:$user /etc/skel/.config/corectrl/profiles/_global_.ccpro
+    # Seed a default global profile from /etc/skel when available.
+    if [ ! -e "$global_profile" ] && [ -e "$skel_profile" ]; then
+        cp "$skel_profile" "$global_profile"
     fi
-done
+
+    # Ensure generated files belong to the target user account without
+    # recursively changing unrelated user-managed files.
+    chown "$user:$user" "$autostart_dir" "$corectrl_dir" "$profiles_dir" > /dev/null 2>&1 || true
+    [ -e "$autostart_file" ] && chown "$user:$user" "$autostart_file" > /dev/null 2>&1 || true
+    [ -e "$corectrl_ini" ] && chown "$user:$user" "$corectrl_ini" > /dev/null 2>&1 || true
+    [ -e "$global_profile" ] && chown "$user:$user" "$global_profile" > /dev/null 2>&1 || true
+done < /etc/passwd

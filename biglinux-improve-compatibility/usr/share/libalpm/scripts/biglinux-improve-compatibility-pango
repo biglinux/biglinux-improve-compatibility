@@ -1,11 +1,12 @@
 #!/bin/bash
 
-for i in $(ls /usr/lib/libpangoxft-*)
-do
-    new_link="$(echo "$i" | sed 's|libpangoxft|libpangox|g')"
+# Create legacy libpangox symlinks for software that still links against the
+# old soname even when only libpangoxft is installed.
+for source_lib in /usr/lib/libpangoxft-*; do
+    [ -e "$source_lib" ] || continue
+    compat_lib="${source_lib/libpangoxft/libpangox}"
 
-    if [ ! -e "$new_link" ]; then
-        ln -s "$i" "$new_link" 2> /dev/null
+    if [ ! -e "$compat_lib" ]; then
+        ln -s "$source_lib" "$compat_lib" 2> /dev/null
     fi
-
 done

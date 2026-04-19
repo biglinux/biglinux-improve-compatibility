@@ -1,28 +1,39 @@
 #!/bin/bash
 
+# Ensure the docker group exists before adding members to it.
 if ! getent group docker > /dev/null; then
     groupadd docker
 fi
 
-for user in $(awk -F':' '{ if ($3 >= 1000 && $1 != "nobody") print $1 }' /etc/passwd); do
+# Add every regular user to the docker group.
+while IFS=: read -r user _ uid _ _ _ _; do
+    [ "$uid" -ge 1000 ] || continue
+    [ "$user" = "nobody" ] && continue
+
     if ! id -nG "$user" | grep -qw docker; then
         usermod -aG docker "$user"
     fi
-done
+done < /etc/passwd
 
-if grep -q "LimitNOFILE=infinity" /lib/systemd/system/containerd.service; then
-    sed -i "/LimitNOFILE=/s/infinity/1048576/" /lib/systemd/system/containerd.service
+# Update containerd defaults only when the target file exists.
+containerd_service="/usr/lib/systemd/system/containerd.service"
+[ -e "/lib/systemd/system/containerd.service" ] && containerd_service="/lib/systemd/system/containerd.service"
+if [ -e "$containerd_service" ] && grep -q "LimitNOFILE=infinity" "$containerd_service"; then
+    sed -i "/LimitNOFILE=/s/infinity/1048576/" "$containerd_service"
 fi
 
+# Start Docker when it is installed but currently inactive.
 if ! systemctl is-active --quiet docker; then
     systemctl enable docker
     systemctl start docker
 fi
 
+# Add the current user as well, useful when this script is run manually.
 if ! id -nG "$(id -un)" | grep -qw docker; then
     usermod -aG docker "$(id -un)"
 fi
 
-if [ "$(stat -c %a /var/run/docker.sock 2>/dev/null)" != "666" ]; then
+# Relax socket permissions only when the Docker socket exists.
+if [ -S /var/run/docker.sock ] && [ "$(stat -c %a /var/run/docker.sock 2>/dev/null)" != "666" ]; then
     chmod 666 /var/run/docker.sock
 fi

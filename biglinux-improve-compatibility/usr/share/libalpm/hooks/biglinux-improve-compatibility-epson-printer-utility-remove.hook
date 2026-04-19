@@ -6,4 +6,4 @@ Target = epson-printer-utility
 [Action]
 Description = Auto enable epson-printer-utility after install
 When = PreTransaction
-Exec = /bin/sh -c 'systemctl disable ecbd'
+Exec = /bin/sh -c '{ [ -e /usr/lib/systemd/system/ecbd.service ] || [ -e /etc/systemd/system/ecbd.service ]; } && systemctl disable ecbd > /dev/null 2>&1'
