@@ -10,3 +10,4 @@ Target = virt-manager
 Description = Configure virt-manager
 When = PostTransaction
 Exec = /usr/share/libalpm/scripts/biglinux-virt-manager-config-install
+Depends = libvirt

@@ -1,5 +1,7 @@
 #!/usr/bin/bash
 
+network_file=/etc/libvirt/qemu/networks/default.xml
+
 # Adiciona os grupos libvirt e libvirt-qemu a todos usuarios acima de 1000
 for user in $(awk -F':' '{ if ($3 >= 1000 && $1 != "nobody") print $1 }' /etc/passwd); do
     gpasswd -d $user libvirt
@@ -7,11 +9,11 @@ for user in $(awk -F':' '{ if ($3 >= 1000 && $1 != "nobody") print $1 }' /etc/pa
 done
 
 # Apaga backup do default.xml
-if [ -e "/etc/libvirt/qemu/networks/default.xml" ]; then
-    rm "/etc/libvirt/qemu/networks/default.xml"
+if [ -e "$network_file" ]; then
+    rm "$network_file"
 fi
-if [ -e "/etc/libvirt/qemu/networks/default.xml.bkp" ]; then
-    rm "/etc/libvirt/qemu/networks/default.xml.bkp"
+if [ -e "${network_file}.bkp" ]; then
+    rm "{$network_file}.bkp"
 fi
 
 # Revert bridge ao original
