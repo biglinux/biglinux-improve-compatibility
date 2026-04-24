@@ -1,0 +1,10 @@
+[Trigger]
+Type = Package
+Operation = Install
+Operation = Upgrade
+Target = biglinux-improve-compatibility
+
+[Action]
+Description = Apply BigLinux defaults for journald, logind and pacman.conf
+When = PostTransaction
+Exec = /bin/sh -c '[ -e /etc/systemd/journald.conf ] && sed -i "s/SystemMaxUse=5M/SystemMaxUse=50M/" /etc/systemd/journald.conf; [ -e /etc/systemd/logind.conf ] && sed -i "s/^#*UserStopDelaySec\s*=.*/UserStopDelaySec=0/;s/^#*KillUserProcesses\s*=.*/KillUserProcesses=yes/" /etc/systemd/logind.conf; [ -e /etc/pacman.conf ] && sed -i "/\[community\]/{N;N;N;d;}" /etc/pacman.conf; :'
