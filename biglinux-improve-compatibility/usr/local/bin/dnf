@@ -10,4 +10,4 @@ echo $"Redirecting your command to the pamac command"
 echo ""
 echo ""
 
-pamac $*
+exec pamac "$@"

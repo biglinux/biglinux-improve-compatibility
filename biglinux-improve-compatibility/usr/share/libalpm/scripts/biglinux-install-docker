@@ -23,9 +23,11 @@ if [ -e "$containerd_service" ] && grep -q "LimitNOFILE=infinity" "$containerd_s
 fi
 
 # Start Docker when it is installed but currently inactive.
-if ! systemctl is-active --quiet docker; then
-    systemctl enable docker
-    systemctl start docker
+if [ -e /usr/lib/systemd/system/docker.service ] || [ -e /etc/systemd/system/docker.service ]; then
+    if ! systemctl is-active --quiet docker; then
+        systemctl enable docker > /dev/null 2>&1 || true
+        systemctl start docker > /dev/null 2>&1 || true
+    fi
 fi
 
 # Add the current user as well, useful when this script is run manually.

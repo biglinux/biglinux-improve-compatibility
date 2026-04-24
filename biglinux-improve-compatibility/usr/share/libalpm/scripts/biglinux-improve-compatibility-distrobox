@@ -1,11 +1,15 @@
 #!/usr/bin/bash
 
 # Remove deprecated flags and adjust exported desktop names for compatibility.
-sed -i '/log_timestamp/s/-u //' /usr/bin/distrobox-enter
+if [ -f /usr/bin/distrobox-enter ]; then
+    sed -i '/log_timestamp/s/-u //' /usr/bin/distrobox-enter
+fi
 # Keep `${container_name}` literal inside sed because we are editing script text,
 # not expanding a shell variable at runtime here.
 # shellcheck disable=SC2016
-sed -i '/desktop_home_file=/s/${container_name}-//' /usr/bin/distrobox-export
+if [ -f /usr/bin/distrobox-export ]; then
+    sed -i '/desktop_home_file=/s/${container_name}-//' /usr/bin/distrobox-export
+fi
 
 # Ensure distrobox global config directory exists.
 if [ ! -d "/etc/distrobox/" ]; then

@@ -1,11 +1,11 @@
 post_install() {
-    systemctl enable biglinux-improve-compatibility
-    systemctl start biglinux-improve-compatibility
-    systemctl enable suspend-bluetooth-fix
-    systemctl start suspend-bluetooth-fix
-    systemctl enable glibc2-41-fix.path
-    systemctl start glibc2-41-fix.path
-    systemctl --global enable jamesdsp-autostart
+    systemctl enable biglinux-improve-compatibility.service || true
+    systemctl start biglinux-improve-compatibility.service || true
+    systemctl enable suspend-bluetooth-fix.service || true
+    systemctl start suspend-bluetooth-fix.service || true
+    systemctl enable glibc2-41-fix.path || true
+    systemctl start glibc2-41-fix.path || true
+    systemctl --global enable jamesdsp-autostart.service || true
     if [[ ! -e /etc/sysctl.d/90-sysrq.conf ]]; then
        echo 'kernel.sysrq = 502'  > /etc/sysctl.d/90-sysrq.conf
     fi
@@ -18,34 +18,34 @@ ProcessSizeMax=0'  > /etc/systemd/coredump.conf.d/custom.conf
 }
 
 pre_remove() {
-    systemctl disable biglinux-improve-compatibility
-    systemctl disable suspend-bluetooth-fix
-    systemctl disable glibc2-41-fix
+    systemctl disable biglinux-improve-compatibility.service || true
+    systemctl disable suspend-bluetooth-fix.service || true
+    systemctl disable glibc2-41-fix.path || true
     if [[ -e /usr/lib/systemd/user/jamesdsp-autostart.service ]]; then
-       systemctl --global disable jamesdsp-autostart
+       systemctl --global disable jamesdsp-autostart.service || true
     fi
-} 
+}
 
 
 pre_upgrade() {
     # Disable the old user unit before package replacement to avoid stale links
     # during the remove/install phase of an upgrade transaction.
     if [[ -e /usr/lib/systemd/user/big-execute-after-user-login.service ]]; then
-       systemctl --global disable big-execute-after-user-login
+       systemctl --global disable big-execute-after-user-login.service || true
     fi
 }
 
 
 post_upgrade() {
-    systemctl --global enable jamesdsp-autostart
-    systemctl enable suspend-bluetooth-fix
-    systemctl start suspend-bluetooth-fix
-    systemctl enable glibc2-41-fix.path
-    systemctl start glibc2-41-fix.path
+    systemctl --global enable jamesdsp-autostart.service || true
+    systemctl enable suspend-bluetooth-fix.service || true
+    systemctl start suspend-bluetooth-fix.service || true
+    systemctl enable glibc2-41-fix.path || true
+    systemctl start glibc2-41-fix.path || true
     if [[ ! -e /etc/sysctl.d/90-sysrq.conf ]]; then
        echo 'kernel.sysrq = 502'  > /etc/sysctl.d/90-sysrq.conf
     fi
-    
+
     if [[ ! -e /etc/systemd/coredump.conf.d/custom.conf ]]; then
         mkdir -p /etc/systemd/coredump.conf.d/
         echo '[Coredump]

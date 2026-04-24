@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 if [[ $XDG_SESSION_TYPE == "wayland" ]] && [[ $XDG_SESSION_DESKTOP == "KDE" ]] && type kdotool &> /dev/null ; then
 
@@ -6,10 +6,8 @@ if [[ $XDG_SESSION_TYPE == "wayland" ]] && [[ $XDG_SESSION_DESKTOP == "KDE" ]] &
 
     if [[ -z $window_id ]]; then
         window_id=$(kdotool search --name 'visual studio code$' | head -n1)
-    fi    
-    kdotool windowactivate $window_id
-
-    /usr/bin/code ${1+"$@"}
-else
-    /usr/bin/code ${1+"$@"}
+    fi
+    [[ -n $window_id ]] && kdotool windowactivate "$window_id"
 fi
+
+exec /usr/bin/code "$@"

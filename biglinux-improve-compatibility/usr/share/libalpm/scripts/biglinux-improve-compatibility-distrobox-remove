@@ -1,6 +1,15 @@
 #!/usr/bin/bash
 
-# Remove the config directory created by the install helper.
-if [ -d "/etc/distrobox/" ]; then
-  rm -rf "/etc/distrobox/"
+# Remove only the default config file created by the install helper so that
+# admin-provided customizations under /etc/distrobox/ are preserved.
+default_conf="/etc/distrobox/distrobox.conf"
+expected_line='container_image_default=xivastudio/biglinux-archlinux:latest'
+
+if [ -f "$default_conf" ] && [ "$(cat "$default_conf")" = "$expected_line" ]; then
+    rm -f "$default_conf"
+fi
+
+# Remove the directory only when left empty after cleanup.
+if [ -d /etc/distrobox ]; then
+    rmdir --ignore-fail-on-non-empty /etc/distrobox 2> /dev/null || true
 fi
