@@ -1,0 +1,13 @@
+[Unit]
+Description=Configure automatic CPU pstate mode
+DefaultDependencies=no
+After=sysinit.target local-fs.target
+Before=multi-user.target graphical.target display-manager.service
+ConditionPathExists=/sys/devices/system/cpu
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/biglinux-auto-pstate
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,68 @@
+#!/bin/bash
+
+# Select a low-latency pstate mode early in boot when the user did not choose
+# one explicitly on the kernel command line.
+
+proc_cmdline="${BIGLINUX_PROC_CMDLINE:-/proc/cmdline}"
+proc_cpuinfo="${BIGLINUX_PROC_CPUINFO:-/proc/cpuinfo}"
+sys_cpu="${BIGLINUX_SYS_CPU:-/sys/devices/system/cpu}"
+
+log() {
+    if command -v logger >/dev/null 2>&1; then
+        logger -t biglinux-auto-pstate "$*" 2>/dev/null || true
+    fi
+}
+
+manual_pstate_is_configured() {
+    [ -r "$proc_cmdline" ] || return 1
+    tr ' ' '\n' < "$proc_cmdline" | grep -Eq '^(amd_pstate|intel_pstate)([.=]|$)'
+}
+
+cpu_vendor() {
+    [ -r "$proc_cpuinfo" ] || return 1
+    awk -F ': *' '/^vendor_id[[:space:]]*:/{ print $2; exit }' "$proc_cpuinfo"
+}
+
+set_pstate_status() {
+    local driver="$1"
+    local desired_status="$2"
+    local status_file="$sys_cpu/$driver/status"
+    local current_status
+
+    [ -r "$status_file" ] || return 0
+
+    current_status="$(cat "$status_file" 2>/dev/null || true)"
+    [ "$current_status" = "$desired_status" ] && return 0
+
+    if ! [ -w "$status_file" ]; then
+        log "Cannot set $driver to $desired_status: $status_file is not writable"
+        return 0
+    fi
+
+    if printf '%s\n' "$desired_status" > "$status_file" 2>/dev/null; then
+        log "Configured $driver status=$desired_status"
+    else
+        log "Failed to configure $driver status=$desired_status"
+    fi
+}
+
+main() {
+    local vendor
+
+    if manual_pstate_is_configured; then
+        log "Keeping pstate mode from kernel command line"
+        return 0
+    fi
+
+    vendor="$(cpu_vendor || true)"
+    case "$vendor" in
+        GenuineIntel)
+            set_pstate_status intel_pstate passive
+            ;;
+        AuthenticAMD)
+            set_pstate_status amd_pstate guided
+            ;;
+    esac
+}
+
+main "$@"
