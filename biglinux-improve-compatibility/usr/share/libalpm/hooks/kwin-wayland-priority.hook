@@ -8,4 +8,4 @@ Target = kwin
 [Action]
 Description = Change kwin_wayland priority
 When = PostTransaction
-Exec = /bin/sh -c '[ -e /usr/lib/systemd/user/plasma-kwin_wayland.service ] && command -v kwriteconfig6 >/dev/null 2>&1 && kwriteconfig6 --file /usr/lib/systemd/user/plasma-kwin_wayland.service --group Service --key Nice -- -11'
+Exec = /bin/sh -c 'if [ -e /usr/lib/systemd/user/plasma-kwin_wayland.service ] && command -v kwriteconfig6 >/dev/null 2>&1; then kwriteconfig6 --file /usr/lib/systemd/user/plasma-kwin_wayland.service --group Service --key Nice -- -11; fi'
