@@ -1,0 +1,69 @@
+#!/bin/bash
+#
+# Enable or disable JamesDSP autostart for the current user.
+#
+# JamesDSP owns ~/.config/autostart/jdsp-gui.desktop: it rewrites that file
+# whenever the autostart option is toggled in its GUI. Any second autostart
+# mechanism (a systemd user unit, for instance) ends up racing it and both
+# instances fight over the same D-Bus name, so we drive the upstream mechanism
+# instead of adding our own.
+#
+# Usage: biglinux-jamesdsp-autostart enable|disable
+#
+# Runs as the user, from the desktop session startup scripts.
+
+set -u
+
+config_home="${XDG_CONFIG_HOME:-$HOME/.config}"
+jamesdsp_conf="$config_home/jamesdsp/application.conf"
+autostart_file="$config_home/autostart/jdsp-gui.desktop"
+
+# Mirrors the file JamesDSP itself writes, so toggling the option in the GUI
+# later produces no diff.
+write_autostart_file() {
+    mkdir -p "$config_home/autostart" || return 1
+    cat > "$autostart_file" <<'EOF'
+[Desktop Entry]
+Exec=/usr/bin/jamesdsp --tray
+Icon=jamesdsp
+Name=JamesDSP for Linux
+StartupNotify=false
+Terminal=false
+Type=Application
+Version=1.0
+X-GNOME-Autostart-Delay=6
+X-GNOME-Autostart-enabled=true
+X-KDE-autostart-after=panel
+X-KDE-autostart-phase=2
+X-MATE-Autostart-Delay=6
+EOF
+}
+
+case "${1:-}" in
+    enable)
+        [[ -e "$jamesdsp_conf" ]] || exit 0
+        sed -i 's|AutoStartEnabled=false|AutoStartEnabled=true|g' "$jamesdsp_conf"
+        write_autostart_file || exit 0
+
+        # The .desktop only takes effect on the next login, so start it now for
+        # the current session. -x to match the process name exactly: -f would
+        # also match this script's own command line.
+        if ! pgrep -x jamesdsp >/dev/null 2>&1; then
+            setsid /usr/bin/jamesdsp --tray >/dev/null 2>&1 < /dev/null &
+        fi
+        logger "JamesDSP autostart enabled"
+        ;;
+    disable)
+        [[ -e "$jamesdsp_conf" ]] && \
+            sed -i 's|AutoStartEnabled=true|AutoStartEnabled=false|g' "$jamesdsp_conf"
+        rm -f "$autostart_file"
+        pkill -x jamesdsp 2>/dev/null
+        logger "JamesDSP autostart disabled"
+        ;;
+    *)
+        echo "Usage: ${0##*/} enable|disable" >&2
+        exit 1
+        ;;
+esac
+
+exit 0
