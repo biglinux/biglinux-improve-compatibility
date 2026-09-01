@@ -14,6 +14,12 @@ msgstr  "Project-Id-Version: biglinux-improve-compatibility\n"
         "Content-Type: text/plain; charset=CHARSET\n"
         "Content-Transfer-Encoding: 8bit\n"
 
+msgid   "This system uses pamac to manage packages."
+msgstr  ""
+
+msgid   "Redirecting your command to the pamac command"
+msgstr  ""
+
 msgid   "Necessary to install <b>jre8</b>"
 msgstr  ""
 
@@ -21,10 +27,4 @@ msgid   "Cancel"
 msgstr  ""
 
 msgid   "Install"
-msgstr  ""
-
-msgid   "This system uses pamac to manage packages."
-msgstr  ""
-
-msgid   "Redirecting your command to the pamac command"
 msgstr  ""
