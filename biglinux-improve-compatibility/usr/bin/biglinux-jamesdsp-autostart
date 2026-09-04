@@ -10,7 +10,11 @@
 #
 # Usage: biglinux-jamesdsp-autostart enable|disable
 #
-# Runs as the user, from the desktop session startup scripts.
+# Runs as the user, from the desktop session startup scripts and the settings panel.
+#
+# Callers that only flip AutoStartEnabled without writing the .desktop file (the live
+# session, for instance) still work: jamesdsp-autostart.service starts the app when
+# the flag is on and this file is absent.
 
 set -u
 
@@ -39,18 +43,26 @@ X-MATE-Autostart-Delay=6
 EOF
 }
 
+# The .desktop only takes effect on the next login, so start the app now for the
+# current session. -x matches the process name exactly: -f would also match this
+# script's own command line.
+#
+# Only worth doing with a display around. Session startup scripts call us before the
+# compositor exists, and launching there just produces a process that dies on
+# "Failed to create wl_display" -- there the .desktop we just wrote is what starts it.
+start_now() {
+    [[ -n "${WAYLAND_DISPLAY:-}${DISPLAY:-}" ]] || return 0
+    if ! pgrep -x jamesdsp >/dev/null 2>&1; then
+        setsid /usr/bin/jamesdsp --tray >/dev/null 2>&1 < /dev/null &
+    fi
+}
+
 case "${1:-}" in
     enable)
         [[ -e "$jamesdsp_conf" ]] || exit 0
         sed -i 's|AutoStartEnabled=false|AutoStartEnabled=true|g' "$jamesdsp_conf"
         write_autostart_file || exit 0
-
-        # The .desktop only takes effect on the next login, so start it now for
-        # the current session. -x to match the process name exactly: -f would
-        # also match this script's own command line.
-        if ! pgrep -x jamesdsp >/dev/null 2>&1; then
-            setsid /usr/bin/jamesdsp --tray >/dev/null 2>&1 < /dev/null &
-        fi
+        start_now
         logger "JamesDSP autostart enabled"
         ;;
     disable)
