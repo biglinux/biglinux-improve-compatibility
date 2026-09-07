@@ -1,20 +1,3 @@
-# JamesDSP ships its own autostart mechanism (~/.config/autostart/jdsp-gui.desktop,
-# rewritten by the app whenever the option is toggled in its GUI). The user unit we
-# used to install was a second mechanism driven by the same AutoStartEnabled flag, so
-# both launched and the loser failed on the D-Bus single-instance check. With
-# Restart=on-failure that failure looped forever, and one of the short-lived instances
-# would eventually tear down the PipeWire filter and leave jamesdsp_sink with no route
-# to the real sink -- silent audio, typically noticed after a resume.
-#
-# Autostart is now handled by /usr/bin/biglinux-jamesdsp-autostart, called from the
-# desktop session startup scripts.
-remove_jamesdsp_autostart_unit() {
-    systemctl --global disable jamesdsp-autostart.service 2>/dev/null || true
-    # The unit file is already gone at this point, so the disable above cannot
-    # resolve the link; drop it explicitly to avoid leaving it dangling.
-    rm -f /etc/systemd/user/default.target.wants/jamesdsp-autostart.service
-}
-
 post_install() {
     systemctl enable biglinux-auto-pstate.service || true
     systemctl start biglinux-auto-pstate.service || true
@@ -24,7 +7,7 @@ post_install() {
     systemctl start suspend-bluetooth-fix.service || true
     systemctl enable glibc2-41-fix.path || true
     systemctl start glibc2-41-fix.path || true
-    remove_jamesdsp_autostart_unit
+    systemctl --global enable jamesdsp-autostart.service || true
     if [[ ! -e /etc/sysctl.d/90-sysrq.conf ]]; then
        echo 'kernel.sysrq = 502'  > /etc/sysctl.d/90-sysrq.conf
     fi
@@ -41,6 +24,9 @@ pre_remove() {
     systemctl disable biglinux-improve-compatibility.service || true
     systemctl disable suspend-bluetooth-fix.service || true
     systemctl disable glibc2-41-fix.path || true
+    if [[ -e /usr/lib/systemd/user/jamesdsp-autostart.service ]]; then
+       systemctl --global disable jamesdsp-autostart.service || true
+    fi
 }
 
 
@@ -50,18 +36,13 @@ pre_upgrade() {
     if [[ -e /usr/lib/systemd/user/big-execute-after-user-login.service ]]; then
        systemctl --global disable big-execute-after-user-login.service || true
     fi
-    # Same reasoning for the JamesDSP unit: while its file is still on disk the
-    # disable resolves the link properly and cleans up after itself.
-    if [[ -e /usr/lib/systemd/user/jamesdsp-autostart.service ]]; then
-       systemctl --global disable jamesdsp-autostart.service || true
-    fi
 }
 
 
 post_upgrade() {
     systemctl enable biglinux-auto-pstate.service || true
     systemctl start biglinux-auto-pstate.service || true
-    remove_jamesdsp_autostart_unit
+    systemctl --global enable jamesdsp-autostart.service || true
     systemctl enable suspend-bluetooth-fix.service || true
     systemctl start suspend-bluetooth-fix.service || true
     systemctl enable glibc2-41-fix.path || true
