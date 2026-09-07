@@ -7,10 +7,39 @@ if [ -e "$kernel_build_path" ]; then
     ln -sf "$kernel_build_path" /usr/src/linux
 fi
 
-# Start classic SysV init scripts when they are present and executable.
-# This hook is intentionally tolerant because /etc/init.d can be empty.
+# Leave native services, including disabled and masked units, to systemd.
+status=0
 for init_script in /etc/init.d/*; do
     [ -f "$init_script" ] || continue
     [ -x "$init_script" ] || continue
-    "$init_script" start
+    unit="${init_script##*/}.service"
+    native_unit=false
+    for unit_dir in /etc/systemd/system /run/systemd/system \
+        /usr/local/lib/systemd/system /usr/lib/systemd/system; do
+        if [ -e "$unit_dir/$unit" ] || [ -L "$unit_dir/$unit" ]; then
+            native_unit=true
+            break
+        fi
+    done
+    "$native_unit" && continue
+
+    header=
+    IFS= read -r header < "$init_script" || true
+    if [[ "$header" =~ ^\#![[:space:]]*([^[:space:]]+) ]]; then
+        interpreter="${BASH_REMATCH[1]}"
+        # OpenRC scripts need its service manager, not a direct SysV call.
+        case "${interpreter##*/}" in
+            openrc-run|runscript) continue ;;
+        esac
+        if [ ! -x "$interpreter" ]; then
+            printf 'Skipping %s: interpreter %s is unavailable.\n' "$init_script" "$interpreter" >&2
+            continue
+        fi
+    fi
+
+    if ! "$init_script" start; then
+        printf 'Failed to start legacy service: %s\n' "$init_script" >&2
+        status=1
+    fi
 done
+exit "$status"
