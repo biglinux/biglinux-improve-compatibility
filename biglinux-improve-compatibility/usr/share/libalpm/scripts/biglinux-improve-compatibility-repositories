@@ -1,0 +1,241 @@
+#!/usr/bin/env bash
+
+# Keep a BigLinux system on the current BigLinux repositories, written the way
+# Arch and Manjaro write theirs: one line for every section, where pacman turns
+# $repo into the section name.
+#
+#   [biglinux-stable]
+#   SigLevel = PackageRequired
+#   Server = https://packages.biglinux.com.br/$repo/$arch
+#
+# On every install or upgrade of biglinux-improve-compatibility this script:
+#
+#   1. removes the BigLinux sections that point at the old repository
+#      (repo.biglinux.com.br): [biglinux-update-stable], and [biglinux-stable] and
+#      [biglinux-testing] with a Server there;
+#   2. adds, when missing, [biglinux-priority] above Manjaro's [core] (BigLinux
+#      builds of packages Manjaro also has, so it has to win) and, where the old
+#      [biglinux-stable] was or at the end, [biglinux-testing] (only on systems
+#      that had BigLinux testing enabled), [biglinux-stable] and [biglinux-extra];
+#   3. moves to the $repo line every BigLinux (and BigCommunity) section still
+#      written as one of our earlier forms: a Server per folder
+#      (https://packages.biglinux.com.br/stable/$arch) or the Include of the
+#      retired biglinux-mirrorlist package;
+#   4. removes the menu entries the old rustdesk-bin copied by hand into
+#      /usr/share/applications. No package owns them, and the rustdesk-bin of the
+#      new repository ships files at those paths, so pacman would refuse the
+#      upgrade with "exists in filesystem". They come back with that upgrade.
+#
+# The signing key of the new repository comes with biglinux-keyring, a dependency
+# of this package.
+#
+# BigCommunity installs this package too, next to comm-improve-compatibility,
+# whose hook follows the same rules: whichever runs second finds nothing left to
+# change.
+#
+# Nothing else is touched: a section with any other source (a mirror of one's
+# own, several servers), commented-out sections (someone disabled them on purpose)
+# and every other line stay as they are. Running it again changes nothing. A
+# backup is kept and the file is replaced atomically only after pacman itself
+# accepts the result.
+
+pacmanConf="${PACMAN_CONF:-/etc/pacman.conf}"
+bigHost="https://packages.biglinux.com.br"
+communityHost="https://repo.communitybig.org"
+oldHost="repo.biglinux.com.br"
+# Where the retired biglinux-mirrorlist package kept its files (only to recognise
+# its Include lines).
+mirrorlistDir="${MIRRORLIST_DIR:-/etc/pacman.d}"
+
+# Never fail the transaction: a package upgrade must not abort because this
+# convenience could not run.
+trap 'exit 0' ERR
+
+log() { echo "biglinux-improve-compatibility-repositories: $*"; }
+
+remove_rustdesk_leftovers() {
+    local root="${ROOT_DIR:-}" name file
+    for name in rustdesk.desktop rustdesk-link.desktop; do
+        file="$root/usr/share/applications/$name"
+        [ -f "$file" ] || continue
+        # Only the copy the old install script made: the installed rustdesk-bin is
+        # the old one (it keeps the original in /usr/share/rustdesk/files) and no
+        # package owns the copy. The content is not compared: BigLinux hooks
+        # rewrite these entries (translated names, extra actions) after the copy.
+        [ -f "$root/usr/share/rustdesk/files/$name" ] || continue
+        if [ -z "${SKIP_OWNER_CHECK:-}" ]; then
+            [ "$(pacman -Qqo "/usr/share/rustdesk/files/$name" 2>/dev/null)" = "rustdesk-bin" ] || continue
+            pacman -Qqo "$file" >/dev/null 2>&1 && continue
+        fi
+        rm -f "$file" && log "removed $file left behind by the old rustdesk-bin"
+    done
+}
+
+remove_rustdesk_leftovers
+
+if [ ! -f "$pacmanConf" ]; then
+    log "$pacmanConf not found. Skipping."
+    exit 0
+fi
+if [ ! -w "$pacmanConf" ]; then
+    log "$pacmanConf is not writable. Skipping."
+    exit 0
+fi
+
+# Write through a copy in the same directory, so the final replace is a rename on
+# one filesystem rather than a partially written file.
+workFile="$(mktemp "${pacmanConf}.biglinux-XXXXXX" 2>/dev/null)" || exit 0
+
+# Include files that open a section of their own (a [name] line inside, as in
+# Include = /etc/pacman.d/openai-chatgpt.conf). pacman reads them in place, so the
+# lines from there on belong to that section, not to the one written above the
+# Include. One per line; pacman expands globs in Include, so does this.
+sectionIncludes=""
+while IFS= read -r inc; do
+    for file in $inc; do
+        if [ -f "$file" ] && grep -qE '^[[:space:]]*\[[^]]+\][[:space:]]*$' "$file"; then
+            sectionIncludes="$sectionIncludes$inc
+"
+            break
+        fi
+    done
+done < <(sed -nE 's/^[[:space:]]*Include[[:space:]]*=[[:space:]]*//p' "$pacmanConf" | sed -E 's/[[:space:]]+$//' | sort -u)
+
+# One pass to learn what is there, one to write. Sections are delimited by their
+# [header]; a section's lines (including comments right after it) belong to it.
+awk -v old="$oldHost" -v big="$bigHost" -v community="$communityHost" -v dir="$mirrorlistDir" \
+    -v sectionincludes="$sectionIncludes" '
+# Whitespace as pacman sees it (isspace): a line pasted from elsewhere may end in
+# a carriage return, which pacman ignores and so must this.
+function trim(s) { sub(/^[[:space:]]+/, "", s); sub(/[[:space:]]+$/, "", s); return s }
+function header(line,   h) {
+    h = trim(line)
+    if (h ~ /^\[[^]]+\]$/) return substr(h, 2, length(h) - 2)
+    return ""
+}
+# "key = value" with any spacing, or "" when the line is not that key.
+function value(line, key,   l) {
+    l = trim(line)
+    if (l !~ ("^" key "[[:space:]]*=")) return ""
+    sub(/^[^=]*=/, "", l)
+    return trim(l)
+}
+# [biglinux-stable] -> "stable"; its host, and the one line it should have.
+function folder(name) { sub(/^(biglinux|community)-/, "", name); return name }
+function host(name) { return name ~ /^community-/ ? community : big }
+function servers(name) { return "Server = " host(name) "/$repo/$arch" }
+# A source line written by us or by our ISOs before the $repo line.
+function earlier(name, srv, inc) {
+    if (srv == host(name) "/" folder(name) "/$arch") return 1
+    return name ~ /^biglinux-/ && inc == dir "/biglinux-" folder(name) "-mirrorlist"
+}
+function block(name) {
+    return sprintf("[%s]\nSigLevel = PackageRequired\n%s\n\n", name, servers(name))
+}
+BEGIN {
+    split("biglinux-priority biglinux-testing biglinux-stable biglinux-extra " \
+          "community-testing community-stable community-extra", names, " ")
+    for (i in names) ours[names[i]] = 1
+    n = split(sectionincludes, l, "\n")
+    for (i = 1; i <= n; i++) if (l[i] != "") opens[l[i]] = 1
+}
+FNR == NR {
+    h = header($0)
+    if (h != "") { cur = h; count[cur]++; next }
+    if (value($0, "Include") in opens) { cur = "Include " value($0, "Include"); next }
+    if (cur == "") next
+    srv = value($0, "Server"); inc = value($0, "Include")
+    if (srv != "" && index(srv, old) > 0) oldserver[cur] = 1
+    # A section to move to the $repo line: exactly one source, in one of our
+    # earlier forms. Anything else (a mirror of ones own, more servers) is left
+    # alone.
+    if (srv != "" || inc != "") {
+        nsrc[cur]++
+        if (earlier(cur, srv, inc)) known[cur] = 1
+    }
+    next
+}
+FNR == 1 {
+    cur = ""
+    for (h in ours)
+        upgrade[h] = (h in known) && nsrc[h] == 1 && count[h] == 1
+    # What to drop: the old repository only. What to add: what is missing.
+    drop["biglinux-update-stable"] = ("biglinux-update-stable" in count)
+    drop["biglinux-stable"] = ("biglinux-stable" in oldserver)
+    drop["biglinux-testing"] = ("biglinux-testing" in oldserver)
+    hadtesting = ("biglinux-testing" in count)
+    need["biglinux-priority"] = !("biglinux-priority" in count)
+    need["biglinux-testing"] = hadtesting && (drop["biglinux-testing"] || !("biglinux-testing" in count))
+    need["biglinux-stable"] = drop["biglinux-stable"] || !("biglinux-stable" in count)
+    need["biglinux-extra"] = !("biglinux-extra" in count)
+    tail = ""
+    if (need["biglinux-testing"]) tail = tail block("biglinux-testing")
+    if (need["biglinux-stable"]) tail = tail block("biglinux-stable")
+    if (need["biglinux-extra"]) tail = tail block("biglinux-extra")
+    skip = 0
+}
+{
+    h = header($0)
+    if (h != "") {
+        cur = h
+        skip = (h in drop) && drop[h]
+        if (h == "core" && need["biglinux-priority"] && !priority_done) {
+            printf "%s", block("biglinux-priority"); priority_done = 1
+        }
+        if ((h == "biglinux-stable" || h == "biglinux-testing") && skip && tail != "") {
+            printf "%s", tail; tail = ""
+        }
+    }
+    # An Include that opens its own section ends the one above it.
+    if (h == "" && (value($0, "Include") in opens)) {
+        cur = "Include " value($0, "Include"); skip = 0
+        print
+        next
+    }
+    # A dropped section loses its own lines; comments that follow it (often the
+    # example blocks of the default pacman.conf) are kept.
+    if (skip && trim($0) !~ /^#/) next
+    if (h == "" && (cur in upgrade) && upgrade[cur] && (value($0, "Server") != "" || value($0, "Include") != "")) {
+        print servers(cur)
+        next
+    }
+    print
+}
+END {
+    if (need["biglinux-priority"] && !priority_done) printf "\n%s", block("biglinux-priority")
+    if (tail != "") printf "\n%s", tail
+}' "$pacmanConf" "$pacmanConf" >"$workFile" || { rm -f "$workFile"; exit 0; }
+
+# Plain bash, not cmp: a minimal install does not have diffutils.
+if [ "$(cat "$pacmanConf")" = "$(cat "$workFile")" ]; then
+    rm -f "$workFile"
+    exit 0
+fi
+
+# Let pacman judge its own configuration before this file becomes the real one.
+# What matters is whether this edit broke anything, not whether the file was
+# already perfect: a pacman.conf pacman already complains about is still a system
+# that needs the repositories, so only a file that worked and stopped working is
+# rejected.
+if command -v pacman-conf >/dev/null 2>&1; then
+    if pacman-conf --config "$pacmanConf" >/dev/null 2>&1 \
+        && ! pacman-conf --config "$workFile" >/dev/null 2>&1; then
+        log "the generated configuration was rejected by pacman-conf. Keeping $pacmanConf unchanged."
+        rm -f "$workFile"
+        exit 0
+    fi
+fi
+
+# Keep the configuration from before this migration: a later run must not
+# overwrite it with an already migrated file.
+backup="${pacmanConf}.bak-biglinux-repos"
+[ -f "$backup" ] || cp -a "$pacmanConf" "$backup" 2>/dev/null
+
+chmod --reference="$pacmanConf" "$workFile" 2>/dev/null
+if mv -f "$workFile" "$pacmanConf" 2>/dev/null; then
+    log "pacman.conf updated for the BigLinux and BigCommunity repositories (backup: $backup)"
+else
+    rm -f "$workFile"
+fi
+
+exit 0
