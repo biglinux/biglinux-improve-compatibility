@@ -13,14 +13,13 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.4.4\n"
+"X-Generator: attranslate\n"
+
 msgid "Necessary to install <b>jre8</b>"
 msgstr "Notwendig, um <b>jre8</b> zu installieren"
+
 msgid "Cancel"
 msgstr "Abbrechen"
+
 msgid "Install"
 msgstr "Installieren"
-msgid "This system uses pamac to manage packages."
-msgstr "Dieses System verwendet pamac, um Pakete zu verwalten."
-msgid "Redirecting your command to the pamac command"
-msgstr "Umleitung Ihres Befehls auf den Befehl pamac"
