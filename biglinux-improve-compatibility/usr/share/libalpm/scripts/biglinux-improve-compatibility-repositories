@@ -31,7 +31,8 @@
 #
 # BigCommunity installs this package too, next to comm-improve-compatibility,
 # whose hook follows the same rules: whichever runs second finds nothing left to
-# change.
+# change. XivaStudio installs it as well, but there steps 1 to 3 are skipped:
+# its pacman.conf is left exactly as it is.
 #
 # Nothing else is touched: a section with any other source (a mirror of one's
 # own, several servers), commented-out sections (someone disabled them on purpose)
@@ -72,6 +73,20 @@ remove_rustdesk_leftovers() {
 }
 
 remove_rustdesk_leftovers
+
+# XivaStudio is built on BigLinux and installs this package, but its
+# repositories are its own business: leave its pacman.conf alone. It keeps
+# Manjaro's ID in os-release; xivastudio-name rewrites NAME to "XIVAStudio ...".
+is_xivastudio() {
+    local root="${ROOT_DIR:-}"
+    grep -qis '^[[:space:]]*NAME=.*xivastudio' "$root/etc/os-release" "$root/usr/lib/os-release" && return 0
+    [ -z "${SKIP_OWNER_CHECK:-}" ] && pacman -Qq xivastudio-name >/dev/null 2>&1
+}
+
+if is_xivastudio; then
+    log "XivaStudio detected. Leaving $pacmanConf unchanged."
+    exit 0
+fi
 
 if [ ! -f "$pacmanConf" ]; then
     log "$pacmanConf not found. Skipping."

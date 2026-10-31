@@ -198,6 +198,13 @@ class RepositoriesTests(unittest.TestCase):
         self.assertEqual(found["community-stable"], [REPO_LINE["community"]])
         self.assertEqual(found["biglinux-extra"], [REPO_LINE["biglinux"]])
 
+    def test_xivastudio_is_left_alone(self):
+        """XivaStudio keeps Manjaro's ID; xivastudio-name only rewrites NAME."""
+        (self.root / "root/usr/lib").mkdir(parents=True)
+        (self.root / "root/usr/lib/os-release").write_text(
+            'NAME="XIVAStudio based on BigLinux Manjaro"\nID="manjaro"\nID_LIKE="arch"\n')
+        self.assertEqual(self.migrate(OLD_ISO), OLD_ISO)
+
     def test_rustdesk_copies_are_removed_and_nothing_else(self):
         root = self.root / "root"
         (root / "usr/share/rustdesk/files").mkdir(parents=True)
