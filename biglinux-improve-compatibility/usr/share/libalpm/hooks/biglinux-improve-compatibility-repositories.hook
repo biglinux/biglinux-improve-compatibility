@@ -1,0 +1,10 @@
+[Trigger]
+Type = Package
+Operation = Install
+Operation = Upgrade
+Target = biglinux-improve-compatibility
+
+[Action]
+Description = Keep pacman.conf on the BigLinux repositories ($repo/$arch)
+When = PostTransaction
+Exec = /usr/share/libalpm/scripts/biglinux-improve-compatibility-repositories

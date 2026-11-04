@@ -2,7 +2,7 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the biglinux-improve-compatibility package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-# 
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: biglinux-improve-compatibility\n"
@@ -14,13 +14,12 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: attranslate\n"
+
 msgid "Necessary to install <b>jre8</b>"
 msgstr "需要安装 <b>jre8</b>"
+
 msgid "Cancel"
 msgstr "取消"
+
 msgid "Install"
 msgstr "安装"
-msgid "This system uses pamac to manage packages."
-msgstr "该系统使用pamac来管理软件包。"
-msgid "Redirecting your command to the pamac command"
-msgstr "将您的命令重定向到pamac命令"
