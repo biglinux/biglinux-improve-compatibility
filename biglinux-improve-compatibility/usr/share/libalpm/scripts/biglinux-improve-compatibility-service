@@ -1,0 +1,14 @@
+#!/bin/bash
+# Turns on, or off, a system unit that a third-party package ships disabled, so the
+# program works right after it is installed. The biglinux-improve-compatibility-*
+# service hooks call it with "enable" after the package is installed and with
+# "disable" before it is removed, while its unit file still exists.
+#
+# Usage: biglinux-improve-compatibility-service enable|disable UNIT
+
+action=$1
+unit=$2
+
+# A package version that no longer ships the unit leaves nothing to do.
+[[ -e /usr/lib/systemd/system/$unit || -e /etc/systemd/system/$unit ]] || exit 0
+systemctl "$action" --now "$unit"

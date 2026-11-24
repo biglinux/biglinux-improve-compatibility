@@ -4,6 +4,6 @@ Operation = Remove
 Target = epson-printer-utility
 
 [Action]
-Description = Auto disable epson-printer-utility before remove
+Description = Disabling the Epson printer utility daemon (ecbd.service)
 When = PreTransaction
-Exec = /bin/sh -c '{ [ -e /usr/lib/systemd/system/ecbd.service ] || [ -e /etc/systemd/system/ecbd.service ]; } && systemctl disable ecbd > /dev/null 2>&1'
+Exec = /usr/share/libalpm/scripts/biglinux-improve-compatibility-service disable ecbd.service

@@ -1,10 +1,9 @@
 [Trigger]
 Type = Package
 Operation = Install
-Operation = Upgrade
 Target = epson-printer-utility
 
 [Action]
-Description = Auto enable epson-printer-utility after install
+Description = Enabling the Epson printer utility daemon (ecbd.service)
 When = PostTransaction
-Exec = /bin/sh -c '{ [ -e /usr/lib/systemd/system/ecbd.service ] || [ -e /etc/systemd/system/ecbd.service ]; } && systemctl enable ecbd > /dev/null 2>&1 && systemctl start ecbd > /dev/null 2>&1'
+Exec = /usr/share/libalpm/scripts/biglinux-improve-compatibility-service enable ecbd.service

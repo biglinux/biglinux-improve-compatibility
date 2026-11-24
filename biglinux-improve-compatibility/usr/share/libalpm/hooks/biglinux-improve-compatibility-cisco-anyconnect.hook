@@ -1,10 +1,9 @@
 [Trigger]
 Type = Package
 Operation = Install
-Operation = Upgrade
 Target = cisco-anyconnect
 
 [Action]
-Description = Auto enable cisco-anyconnect after install
+Description = Enabling the Cisco AnyConnect VPN agent (vpnagentd.service)
 When = PostTransaction
-Exec = /bin/sh -c '{ [ -e /usr/lib/systemd/system/vpnagentd.service ] || [ -e /etc/systemd/system/vpnagentd.service ]; } && systemctl enable vpnagentd > /dev/null 2>&1 && systemctl start vpnagentd > /dev/null 2>&1'
+Exec = /usr/share/libalpm/scripts/biglinux-improve-compatibility-service enable vpnagentd.service

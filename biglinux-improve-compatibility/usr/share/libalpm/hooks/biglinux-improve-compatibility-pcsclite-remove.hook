@@ -4,6 +4,6 @@ Operation = Remove
 Target = pcsclite
 
 [Action]
-Description = Auto disable pcsclite before remove
+Description = Disabling the smart card daemon (pcscd.service)
 When = PreTransaction
-Exec = /bin/sh -c '{ [ -e /usr/lib/systemd/system/pcscd.service ] || [ -e /etc/systemd/system/pcscd.service ]; } && systemctl disable pcscd > /dev/null 2>&1'
+Exec = /usr/share/libalpm/scripts/biglinux-improve-compatibility-service disable pcscd.service
