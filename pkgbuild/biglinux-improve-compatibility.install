@@ -57,4 +57,16 @@ post_upgrade() {
 Storage=none
 ProcessSizeMax=0'  > /etc/systemd/coredump.conf.d/custom.conf
     fi
+
+    # Earlier versions moved kscreenlocker's greeter to kscreenlocker_greet_orig behind a
+    # wrapper that ran it twice; the second run aborts on the Wayland socket the first one
+    # consumed, so the screen never unlocks. Put the packaged greeter back; without
+    # kscreenlocker the leftover is dropped, so it never blocks a later install.
+    if [[ -e /usr/lib/kscreenlocker_greet_orig ]]; then
+        if [[ -e /usr/lib/kscreenlocker_greet ]] && IFS= read -r -n4 magic </usr/lib/kscreenlocker_greet && [[ $magic != $'\x7fELF' ]]; then
+            mv -f /usr/lib/kscreenlocker_greet_orig /usr/lib/kscreenlocker_greet
+        else
+            rm -f /usr/lib/kscreenlocker_greet_orig
+        fi
+    fi
 }
