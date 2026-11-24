@@ -69,4 +69,13 @@ ProcessSizeMax=0'  > /etc/systemd/coredump.conf.d/custom.conf
             rm -f /usr/lib/kscreenlocker_greet_orig
         fi
     fi
+
+    # The ISO used to install this older copy of sddm's PAM file over the packaged one. The
+    # packaged file also opens a fresh session keyring and unlocks gnome-keyring. Adopt it
+    # only where the old copy is untouched, so local changes (big-parental-controls adds a
+    # pam_exec line) are never replaced.
+    iso_sddm_pam=$'#%PAM-1.0\n\nauth\t\tinclude\t\tsystem-login\nauth\t\toptional\tpam_kwallet5.so\naccount\t\tinclude\t\tsystem-login\npassword\tinclude\t\tsystem-login\nsession\t\tinclude\t\tsystem-login\nsession\t\toptional\tpam_kwallet5.so auto_start'
+    if [[ -f /etc/pam.d/sddm.pacnew && -f /etc/pam.d/sddm && $(</etc/pam.d/sddm) == "$iso_sddm_pam" ]]; then
+        mv -f /etc/pam.d/sddm.pacnew /etc/pam.d/sddm
+    fi
 }
