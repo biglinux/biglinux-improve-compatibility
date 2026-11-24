@@ -1,8 +1,0 @@
-#!/bin/bash
-
-if [[ $XDG_SESSION_TYPE == "wayland" ]] && [[ $XDG_SESSION_DESKTOP == "KDE" ]] && type kdotool &> /dev/null ; then
-    window_id=$(kdotool search --name kate | head -n1)
-    [[ -n $window_id ]] && kdotool windowactivate "$window_id"
-fi
-
-exec /usr/bin/kate "$@"
