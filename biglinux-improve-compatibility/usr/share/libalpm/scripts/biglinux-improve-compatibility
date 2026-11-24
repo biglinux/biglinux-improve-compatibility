@@ -46,6 +46,14 @@ for module_dir in /usr/lib/modules/*; do
     fi
 done
 
+# A removed kernel takes its module directory along, so the loop above never
+# reaches its header link.
+for header_link in /usr/src/linux-headers-*; do
+    if [ -L "$header_link" ] && [ ! -e "$header_link" ]; then
+        rm -f "$header_link"
+    fi
+done
+
 # Patch HPLIP distro detection to avoid false negatives on Manjaro-based systems.
 if [ -e "/usr/share/hplip/base/password.py" ]; then
     sed -i "s|os_name = platform.dist()\[0]|os_name = 'manjarolinux'|g" /usr/share/hplip/base/password.py 2> /dev/null
