@@ -4,6 +4,6 @@ Type = Package
 Target = docker
 
 [Action]
-Description = Remove Docker and reconfigure.
-When = PostTransaction
-Exec = /bin/sh -c "/usr/share/libalpm/scripts/biglinux-remove-docker"
+Description = Stopping Docker and removing the docker group
+When = PreTransaction
+Exec = /usr/share/libalpm/scripts/biglinux-remove-docker

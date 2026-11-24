@@ -1,18 +1,9 @@
 #!/bin/bash
+# Undoes biglinux-install-docker before the docker package is removed
+# (biglinux-docker-remove.hook): stops and disables Docker while its units still
+# exist, then deletes the docker group.
 
-# If Docker is still installed, keep the service state untouched.
-if pacman -Qi docker &> /dev/null; then
-    echo "Docker is installed. The docker.service will not be disabled."
-else
-    # Disable the unit only when it exists on this system.
-    if systemctl list-unit-files | grep -qw docker.service; then
-        echo "Disabling docker.service..."
-        systemctl disable docker.service > /dev/null
-    fi
-fi
-
-# Remove the docker group when it exists.
+systemctl disable --now docker.socket docker.service
 if getent group docker > /dev/null; then
-    echo "Removing docker group..."
-    groupdel docker > /dev/null
+    groupdel docker
 fi
