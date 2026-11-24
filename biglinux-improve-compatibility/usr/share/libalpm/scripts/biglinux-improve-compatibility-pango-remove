@@ -1,6 +1,7 @@
 #!/bin/bash
-
-# Remove only compatibility links created by the install helper.
+# Deletes the libpangox links biglinux-improve-compatibility-pango created, before
+# pango or this package is removed (biglinux-improve-compatibility-pango-remove.hook).
+# Only links go: a real libpangox file stays.
 for source_lib in /usr/lib/libpangoxft-*; do
     [ -e "$source_lib" ] || continue
     compat_lib="${source_lib/libpangoxft/libpangox}"

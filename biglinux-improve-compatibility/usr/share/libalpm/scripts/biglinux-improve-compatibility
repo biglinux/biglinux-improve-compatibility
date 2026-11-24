@@ -1,9 +1,15 @@
 #!/bin/bash
+# Keeps the paths that programs built for other distributions (AUR packages,
+# converted .deb and .rpm, vendor installers) expect on an Arch-based system. Run
+# by biglinux-improve-compatibility.hook after kernels, this package and the
+# libraries below change, and after a kernel is removed. Every step checks before
+# it acts, so running it again changes nothing.
+#
+# biglinux-improve-compatibility-remove deletes the kernel header links when this
+# package is removed; the library links stay, since programs may depend on them.
 
-# Create a compatibility symlink only when:
-# 1) the source library exists and
-# 2) the compatibility name does not already exist.
-# This keeps the script idempotent and safe to run multiple times.
+# Links a library under an older soname that prebuilt programs still request.
+# An existing file or link at that name is never replaced.
 create_compat_symlink() {
     local source_path="$1"
     local target_path="$2"

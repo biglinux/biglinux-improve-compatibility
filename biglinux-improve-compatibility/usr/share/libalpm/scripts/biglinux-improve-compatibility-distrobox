@@ -1,6 +1,10 @@
 #!/usr/bin/bash
+# Adjusts distrobox after it is installed or upgraded
+# (biglinux-improve-compatibility-distrobox.hook) and gives it the BigLinux Arch
+# image as default container.
 
-# Remove deprecated flags and adjust exported desktop names for compatibility.
+# distrobox-enter: drop the -u flag of its log timestamp. distrobox-export: name
+# exported menu entries without the container prefix.
 if [ -f /usr/bin/distrobox-enter ]; then
     sed -i '/log_timestamp/s/-u //' /usr/bin/distrobox-enter
 fi

@@ -5,6 +5,6 @@ Operation = Upgrade
 Target = distrobox
 
 [Action]
-Description = Auto configure distrobox after install
+Description = Setting up distrobox: export fixes and the BigLinux default image
 When = PostTransaction
 Exec = /usr/share/libalpm/scripts/biglinux-improve-compatibility-distrobox

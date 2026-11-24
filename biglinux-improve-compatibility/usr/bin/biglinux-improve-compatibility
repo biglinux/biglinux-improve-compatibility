@@ -1,4 +1,9 @@
 #!/bin/bash
+# Gives programs packaged for Debian-style systems what they expect at boot:
+# /usr/src/linux points at the running kernel's headers, and the init scripts
+# they install in /etc/init.d are started when no systemd unit of the same name
+# exists. Run by biglinux-improve-compatibility.service at boot and by
+# biglinux-old-sysvinit-autostart.hook when a package installs an init script.
 
 # Keep /usr/src/linux pointing to the currently running kernel headers.
 # Legacy build scripts often expect this symlink to exist.

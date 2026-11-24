@@ -1,7 +1,8 @@
 #!/bin/bash
+# Opens Java Web Start (.jnlp) files, which jnlp-check.desktop registers it for,
+# with Java 8's javaws. When Java 8 is missing it offers to build jre8 from the
+# AUR through pamac and make it the active Java.
 
-# Configure gettext fallbacks so UI strings are translated when possible.
-LANGUAGE="$LANG:en"
 export TEXTDOMAINDIR="/usr/share/locale"
 export TEXTDOMAIN=biglinux-improve-compatibility
 

@@ -1,21 +1,18 @@
 #!/bin/bash
+# Lets every person on the machine run VirtualBox machines with USB passthrough,
+# right after the virtualbox package is installed (biglinux-virtualbox.hook):
+# VirtualBox gives USB devices only to members of vboxusers.
 
-# Create the VirtualBox users group if it does not exist.
-if ! getent group vboxusers > /dev/null; then
-    groupadd vboxusers
-fi
+getent group vboxusers > /dev/null || groupadd vboxusers
 
-# Add each valid /home account to vboxusers.
-for home_dir in /home/*; do
-    [ -d "$home_dir" ] || continue
+# Accounts from UID 1000 up are people; nobody (65534) is not one.
+while IFS=: read -r user _ uid _; do
+    ((uid >= 1000)) || continue
+    [[ $user == nobody ]] && continue
+    gpasswd -a "$user" vboxusers > /dev/null
+done < /etc/passwd
 
-    user_add="${home_dir##*/}"
-    if id "$user_add" > /dev/null 2>&1; then
-        gpasswd -a "$user_add" vboxusers > /dev/null 2>&1 || true
-    fi
-done
-
-# Reload VirtualBox kernel modules when the helper is available.
-if command -v vboxreload > /dev/null 2>&1; then
-    vboxreload > /dev/null 2>&1 || true
+# Load the kernel modules the new package brings, so no reboot is needed.
+if command -v vboxreload > /dev/null; then
+    vboxreload > /dev/null
 fi

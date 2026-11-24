@@ -1,3 +1,6 @@
+# Warsaw, the security module Brazilian banks require, installs a binary that asks
+# for an executable stack, which glibc 2.41 refuses to load. execstack -s marks it
+# again whenever an update rewrites it (glibc2-41-fix.path watches the file).
 [Unit]
 Description=Fix apps broken with this bug: https://sourceware.org/bugzilla/show_bug.cgi?id=32653
 

@@ -4,6 +4,6 @@ Type = Package
 Target = virtualbox
 
 [Action]
-Description = Install VirtualBox and create the vboxusers group
+Description = Adding users to the vboxusers group
 When = PostTransaction
-Exec = /bin/sh -c "/usr/share/libalpm/scripts/biglinux-install-virtualbox"
+Exec = /usr/share/libalpm/scripts/biglinux-install-virtualbox
