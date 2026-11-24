@@ -1,28 +1,34 @@
 #!/bin/bash
+# Undoes biglinux-improve-compatibility-corectrl before the corectrl package is
+# removed (biglinux-improve-compatibility-corectrl-remove.hook). A person's files
+# go only while they are still the ones the install script wrote: settings changed
+# in CoreCtrl stay.
 
-# Remove the tuning flag added by the install script.
-if grep -q "amdgpu.ppfeaturemask" /etc/default/grub 2> /dev/null; then
+if grep -q amdgpu.ppfeaturemask /etc/default/grub; then
     sed -i '/GRUB_CMDLINE_LINUX_DEFAULT/s/ amdgpu.ppfeaturemask=0xfffd7fff//' /etc/default/grub
-    update-grub > /dev/null 2>&1 || true
+    update-grub > /dev/null
 fi
 
-# Reuse login.defs UID boundaries to target regular users only.
-uid_min="$(awk '/^UID_MIN/ {print $2; exit}' /etc/login.defs)"
-uid_max="$(awk '/^UID_MAX/ {print $2; exit}' /etc/login.defs)"
-[ -n "$uid_min" ] || uid_min=1000
-[ -n "$uid_max" ] || uid_max=60000
+desktop_file=/usr/share/applications/org.corectrl.CoreCtrl.desktop
+default_ini=$'[General]\nstartOnSysTray=true'
 
 while IFS=: read -r user _ uid _ _ home _; do
-    [ "$user" = "nobody" ] && continue
-    [ "$uid" -ge "$uid_min" ] && [ "$uid" -le "$uid_max" ] || continue
-    [ -d "$home" ] || continue
-    case "$home" in
-        /home/*|/var/home/*) ;;
-        *) continue ;;
-    esac
+    ((uid >= 1000)) || continue
+    [[ $user == nobody ]] && continue
+    [[ $home == /home/* || $home == /var/home/* ]] && [[ -d $home ]] || continue
 
-    # Remove files created by the companion configuration script.
-    rm -f "$home/.config/autostart/org.corectrl.CoreCtrl.desktop"
-    rm -f "$home/.config/corectrl/corectrl.ini"
     rm -f "/etc/polkit-1/rules.d/90-corectrl-$user.rules"
+
+    # As the person, like the install script, so their links are never followed by root.
+    runuser -u "$user" -- bash -c '
+        home=$1 desktop_file=$2 default_ini=$3
+        autostart_file=$home/.config/autostart/org.corectrl.CoreCtrl.desktop
+        if [[ -f $autostart_file && -f $desktop_file && $(< "$autostart_file") == "$(< "$desktop_file")" ]]; then
+            rm -f "$autostart_file"
+        fi
+        corectrl_ini=$home/.config/corectrl/corectrl.ini
+        if [[ -f $corectrl_ini && $(< "$corectrl_ini") == "$default_ini" ]]; then
+            rm -f "$corectrl_ini"
+        fi
+    ' bash "$home" "$desktop_file" "$default_ini"
 done < /etc/passwd

@@ -1,31 +1,31 @@
 #!/bin/bash
+# Makes CoreCtrl usable right after the corectrl package is installed
+# (biglinux-improve-compatibility-corectrl.hook):
+#   - the amdgpu.ppfeaturemask kernel parameter unlocks AMD GPU clock and voltage
+#     control, which CoreCtrl needs;
+#   - a polkit rule per person lets their active local session start CoreCtrl's
+#     helper without a password prompt;
+#   - CoreCtrl starts minimized to the tray at login.
+# biglinux-improve-compatibility-corectrl-remove undoes it.
 
-# Enable advanced AMD tuning by appending the kernel parameter once.
-if ! grep -q "amdgpu.ppfeaturemask" /etc/default/grub 2> /dev/null; then
-    sed -i '/GRUB_CMDLINE_LINUX_DEFAULT/s/\"/ amdgpu.ppfeaturemask=0xfffd7fff"/2' /etc/default/grub
-    update-grub > /dev/null 2>&1 || true
+if ! grep -q amdgpu.ppfeaturemask /etc/default/grub; then
+    # Appends before the closing quote of GRUB_CMDLINE_LINUX_DEFAULT, single or double.
+    sed -i -E "/^GRUB_CMDLINE_LINUX_DEFAULT=/s/([\"'])[[:space:]]*\$/ amdgpu.ppfeaturemask=0xfffd7fff\1/" /etc/default/grub
+    if grep -q amdgpu.ppfeaturemask /etc/default/grub; then
+        update-grub > /dev/null
+    fi
 fi
 
-# Read UID limits from login.defs to identify regular human users.
-uid_min="$(awk '/^UID_MIN/ {print $2; exit}' /etc/login.defs)"
-uid_max="$(awk '/^UID_MAX/ {print $2; exit}' /etc/login.defs)"
-[ -n "$uid_min" ] || uid_min=1000
-[ -n "$uid_max" ] || uid_max=60000
+desktop_file=/usr/share/applications/org.corectrl.CoreCtrl.desktop
+skel_profile=/etc/skel/.config/corectrl/profiles/_global_.ccpro
 
-desktop_file="/usr/share/applications/org.corectrl.corectrl.desktop"
-skel_profile="/etc/skel/.config/corectrl/profiles/_global_.ccpro"
-
+# Accounts from UID 1000 up with a home under /home are people.
 while IFS=: read -r user _ uid _ _ home _; do
-    [ "$user" = "nobody" ] && continue
-    [ "$uid" -ge "$uid_min" ] && [ "$uid" -le "$uid_max" ] || continue
-    [ -d "$home" ] || continue
-    case "$home" in
-        /home/*|/var/home/*) ;;
-        *) continue ;;
-    esac
+    ((uid >= 1000)) || continue
+    [[ $user == nobody ]] && continue
+    [[ $home == /home/* || $home == /var/home/* ]] && [[ -d $home ]] || continue
 
-    # Grant the selected CoreCtrl helper actions through Polkit for this user.
-cat << EOF > "/etc/polkit-1/rules.d/90-corectrl-$user.rules"
+    cat > "/etc/polkit-1/rules.d/90-corectrl-$user.rules" << RULE
 polkit.addRule(function(action, subject) {
     if ((action.id == "org.corectrl.helper.init" ||
         action.id == "org.corectrl.helperkiller.init") &&
@@ -35,41 +35,21 @@ polkit.addRule(function(action, subject) {
             return polkit.Result.YES;
     }
 });
-EOF
+RULE
 
-    config_dir="$home/.config"
-    autostart_dir="$config_dir/autostart"
-    corectrl_dir="$config_dir/corectrl"
-    profiles_dir="$corectrl_dir/profiles"
-    autostart_file="$autostart_dir/org.corectrl.CoreCtrl.desktop"
-    corectrl_ini="$corectrl_dir/corectrl.ini"
-    global_profile="$profiles_dir/_global_.ccpro"
-
-    # Prepare all folders before writing any user configuration.
-    mkdir -p "$autostart_dir" "$profiles_dir"
-
-    # Copy desktop entry to autostart so CoreCtrl launches with the session.
-    if [ -e "$desktop_file" ]; then
-        cp "$desktop_file" "$autostart_file"
-    fi
-
-    # Create a default config only when the user does not already have one.
-    if [ ! -e "$corectrl_ini" ]; then
-cat << EOF > "$corectrl_ini"
-[General]
-startOnSysTray=true
-EOF
-    fi
-
-    # Seed a default global profile from /etc/skel when available.
-    if [ ! -e "$global_profile" ] && [ -e "$skel_profile" ]; then
-        cp "$skel_profile" "$global_profile"
-    fi
-
-    # Ensure generated files belong to the target user account without
-    # recursively changing unrelated user-managed files.
-    chown "$user:$user" "$autostart_dir" "$corectrl_dir" "$profiles_dir" > /dev/null 2>&1 || true
-    [ -e "$autostart_file" ] && chown "$user:$user" "$autostart_file" > /dev/null 2>&1 || true
-    [ -e "$corectrl_ini" ] && chown "$user:$user" "$corectrl_ini" > /dev/null 2>&1 || true
-    [ -e "$global_profile" ] && chown "$user:$user" "$global_profile" > /dev/null 2>&1 || true
+    # As the person, so a link they placed in their home cannot point root's writes
+    # elsewhere. Their own settings and profile are never replaced.
+    runuser -u "$user" -- bash -c '
+        home=$1 desktop_file=$2 skel_profile=$3
+        mkdir -p "$home/.config/autostart" "$home/.config/corectrl/profiles"
+        if [[ -e $desktop_file ]]; then
+            cp "$desktop_file" "$home/.config/autostart/org.corectrl.CoreCtrl.desktop"
+        fi
+        if [[ ! -e $home/.config/corectrl/corectrl.ini ]]; then
+            printf "[General]\nstartOnSysTray=true\n" > "$home/.config/corectrl/corectrl.ini"
+        fi
+        if [[ ! -e $home/.config/corectrl/profiles/_global_.ccpro && -e $skel_profile ]]; then
+            cp "$skel_profile" "$home/.config/corectrl/profiles/_global_.ccpro"
+        fi
+    ' bash "$home" "$desktop_file" "$skel_profile"
 done < /etc/passwd
