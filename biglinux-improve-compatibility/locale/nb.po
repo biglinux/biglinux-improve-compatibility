@@ -1,0 +1,28 @@
+# Norwegian Bokmal translations for biglinux-improve-compatibility package.
+# Copyright (C) 2026 THE biglinux-improve-compatibility'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the biglinux-improve-compatibility package.
+# Automatically generated, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: biglinux-improve-compatibility\n"
+"Report-Msgid-Bugs-To: \n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: nb\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+
+#: usr/bin/jnlp-check
+msgid "Necessary to install <b>jre8</b>"
+msgstr "<b>jre8</b> må installeres"
+
+#: usr/bin/jnlp-check
+msgid "Cancel"
+msgstr "Avbryt"
+
+#: usr/bin/jnlp-check
+msgid "Install"
+msgstr "Installer"

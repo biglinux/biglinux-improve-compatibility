@@ -1,10 +1,9 @@
 [Trigger]
 Type = Package
 Operation = Install
-Operation = Upgrade
 Target = lact
 
 [Action]
-Description = Auto configure lact after install
+Description = Enabling the LACT GPU control daemon (lactd.service)
 When = PostTransaction
-Exec = /bin/sh -c '{ [ -e /usr/lib/systemd/system/lactd.service ] || [ -e /etc/systemd/system/lactd.service ]; } && systemctl enable lactd > /dev/null 2>&1 && systemctl start lactd > /dev/null 2>&1'
+Exec = /usr/share/libalpm/scripts/biglinux-improve-compatibility-service enable lactd.service

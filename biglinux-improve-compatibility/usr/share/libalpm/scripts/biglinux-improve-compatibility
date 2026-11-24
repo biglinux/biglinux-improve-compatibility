@@ -1,9 +1,15 @@
 #!/bin/bash
+# Keeps the paths that programs built for other distributions (AUR packages,
+# converted .deb and .rpm, vendor installers) expect on an Arch-based system. Run
+# by biglinux-improve-compatibility.hook after kernels, this package and the
+# libraries below change, and after a kernel is removed. Every step checks before
+# it acts, so running it again changes nothing.
+#
+# biglinux-improve-compatibility-remove deletes the kernel header links when this
+# package is removed; the library links stay, since programs may depend on them.
 
-# Create a compatibility symlink only when:
-# 1) the source library exists and
-# 2) the compatibility name does not already exist.
-# This keeps the script idempotent and safe to run multiple times.
+# Links a library under an older soname that prebuilt programs still request.
+# An existing file or link at that name is never replaced.
 create_compat_symlink() {
     local source_path="$1"
     local target_path="$2"
@@ -12,12 +18,6 @@ create_compat_symlink() {
         ln -s "$source_path" "$target_path" 2> /dev/null || true
     fi
 }
-
-# Increase StartLimitBurst to avoid plasmashell rate-limiting while themes are
-# changing and restarting the shell repeatedly in a short period.
-if [ -e "/usr/lib/systemd/user/plasma-plasmashell.service" ]; then
-    sed -i 's|StartLimitBurst=3$|StartLimitBurst=20|g' /usr/lib/systemd/user/plasma-plasmashell.service
-fi
 
 # For each installed kernel, keep legacy header and version links in sync.
 # Some third-party packages still expect these historical paths.
@@ -52,13 +52,13 @@ for module_dir in /usr/lib/modules/*; do
     fi
 done
 
-# Patch HPLIP distro detection to avoid false negatives on Manjaro-based systems.
-if [ -e "/usr/share/hplip/base/password.py" ]; then
-    sed -i "s|os_name = platform.dist()\[0]|os_name = 'manjarolinux'|g" /usr/share/hplip/base/password.py 2> /dev/null
-fi
-if [ -e "/usr/share/hplip/base/utils.py" ] && ! grep -q "\.replace('-', '.')" /usr/share/hplip/base/utils.py; then
-    sed -i -E "/def get_distro_name/,/^def /s/(^\s*ver = .+)/\1\n\1.replace('-', '.')/" /usr/share/hplip/base/utils.py
-fi
+# A removed kernel takes its module directory along, so the loop above never
+# reaches its header link.
+for header_link in /usr/src/linux-headers-*; do
+    if [ -L "$header_link" ] && [ ! -e "$header_link" ]; then
+        rm -f "$header_link"
+    fi
+done
 
 if [ -e "/usr/lib/libicuio.so" ]; then
     create_compat_symlink /usr/lib/libicuio.so /usr/lib/libicuio.so.suse65.1

@@ -1,41 +1,17 @@
 #!/bin/bash
+# Lets every person on the machine use Docker without sudo, and starts it, right
+# after the docker package is installed (biglinux-docker.hook). Membership of the
+# docker group is what grants access to /run/docker.sock; it takes effect at the
+# next login.
 
-# Ensure the docker group exists before adding members to it.
-if ! getent group docker > /dev/null; then
-    groupadd docker
-fi
+# docker's sysusers.d entry normally creates the group already.
+getent group docker > /dev/null || groupadd docker
 
-# Add every regular user to the docker group.
-while IFS=: read -r user _ uid _ _ _ _; do
-    [ "$uid" -ge 1000 ] || continue
-    [ "$user" = "nobody" ] && continue
-
-    if ! id -nG "$user" | grep -qw docker; then
-        usermod -aG docker "$user"
-    fi
+# Accounts from UID 1000 up are people; nobody (65534) is not one.
+while IFS=: read -r user _ uid _; do
+    ((uid >= 1000)) || continue
+    [[ $user == nobody ]] && continue
+    usermod -aG docker "$user"
 done < /etc/passwd
 
-# Update containerd defaults only when the target file exists.
-containerd_service="/usr/lib/systemd/system/containerd.service"
-[ -e "/lib/systemd/system/containerd.service" ] && containerd_service="/lib/systemd/system/containerd.service"
-if [ -e "$containerd_service" ] && grep -q "LimitNOFILE=infinity" "$containerd_service"; then
-    sed -i "/LimitNOFILE=/s/infinity/1048576/" "$containerd_service"
-fi
-
-# Start Docker when it is installed but currently inactive.
-if [ -e /usr/lib/systemd/system/docker.service ] || [ -e /etc/systemd/system/docker.service ]; then
-    if ! systemctl is-active --quiet docker; then
-        systemctl enable docker > /dev/null 2>&1 || true
-        systemctl start docker > /dev/null 2>&1 || true
-    fi
-fi
-
-# Add the current user as well, useful when this script is run manually.
-if ! id -nG "$(id -un)" | grep -qw docker; then
-    usermod -aG docker "$(id -un)"
-fi
-
-# Relax socket permissions only when the Docker socket exists.
-if [ -S /var/run/docker.sock ] && [ "$(stat -c %a /var/run/docker.sock 2>/dev/null)" != "666" ]; then
-    chmod 666 /var/run/docker.sock
-fi
+systemctl enable --now docker.service

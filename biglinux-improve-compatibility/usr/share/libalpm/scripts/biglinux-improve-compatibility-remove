@@ -1,16 +1,13 @@
 #!/bin/bash
+# Deletes the kernel header links biglinux-improve-compatibility created
+# (/usr/src/linux-headers-<version> and /usr/lib/modules/<version>/build/version)
+# before this package is removed (biglinux-improve-compatibility-remove.hook).
 
-# Work inside /usr/src where linux-headers symlinks are managed.
-cd /usr/src || exit 0
-
-# Remove stale kernel header links left by previously installed kernels.
-for header_entry in linux-headers-*; do
-    [ -e "$header_entry" ] || continue
-
-    kernelrm="${header_entry#linux-headers-}"
-    rm "/usr/src/linux-headers-$kernelrm" 2> /dev/null
-    rm "/usr/lib/modules/$kernelrm/build/version" 2> /dev/null
-
+for header_link in /usr/src/linux-headers-*; do
+    [ -L "$header_link" ] || continue
+    kernel_version="${header_link#/usr/src/linux-headers-}"
+    rm -f "$header_link"
+    if [ -L "/usr/lib/modules/$kernel_version/build/version" ]; then
+        rm -f "/usr/lib/modules/$kernel_version/build/version"
+    fi
 done
-
-exit 0

@@ -1,7 +1,7 @@
 #!/usr/bin/bash
-
-# Remove only the default config file created by the install helper so that
-# admin-provided customizations under /etc/distrobox/ are preserved.
+# Deletes the default /etc/distrobox/distrobox.conf that
+# biglinux-improve-compatibility-distrobox wrote, before distrobox is removed
+# (biglinux-improve-compatibility-distrobox-remove.hook). A file someone edited stays.
 default_conf="/etc/distrobox/distrobox.conf"
 expected_line='container_image_default=xivastudio/biglinux-archlinux:latest'
 

@@ -1,10 +1,9 @@
 [Trigger]
 Type = Package
 Operation = Install
-Operation = Upgrade
 Target = pcsclite
 
 [Action]
-Description = Auto enable pcsclite after install
+Description = Enabling the smart card daemon (pcscd.service)
 When = PostTransaction
-Exec = /bin/sh -c '{ [ -e /usr/lib/systemd/system/pcscd.service ] || [ -e /etc/systemd/system/pcscd.service ]; } && systemctl enable pcscd > /dev/null 2>&1 && systemctl start pcscd > /dev/null 2>&1'
+Exec = /usr/share/libalpm/scripts/biglinux-improve-compatibility-service enable pcscd.service

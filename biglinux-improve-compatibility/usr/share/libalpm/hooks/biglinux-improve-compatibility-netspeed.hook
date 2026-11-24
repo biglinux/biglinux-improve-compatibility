@@ -1,0 +1,10 @@
+[Trigger]
+Type = Path
+Operation = Install
+Operation = Upgrade
+Target = usr/share/plasma/plasmoids/org.kde.netspeedWidget/metadata.json
+
+[Action]
+Description = Letting Plasma list the network speed widget
+When = PostTransaction
+Exec = /usr/share/libalpm/scripts/biglinux-improve-compatibility-netspeed

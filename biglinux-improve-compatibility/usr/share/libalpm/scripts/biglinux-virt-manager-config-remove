@@ -1,25 +1,27 @@
 #!/usr/bin/bash
+# Undoes biglinux-virt-manager-config-install before libvirt or
+# biglinux-virt-manager-config is removed (z-biglinux-virt-manager-config-remove.hook):
+# group membership, the bridging rule and libvirtd at boot. The default network
+# goes back to the copy saved before the install script changed it; a network the
+# script never touched stays as it is.
 
-# Remove libvirt-related group membership for regular users (UID >= 1000).
-while IFS=: read -r user _ uid _ _ _ _; do
-    [ "$uid" -ge 1000 ] || continue
-    [ "$user" = "nobody" ] && continue
+network=/etc/libvirt/qemu/networks/default.xml
 
-    gpasswd -d "$user" libvirt > /dev/null 2>&1 || true
-    gpasswd -d "$user" libvirt-qemu > /dev/null 2>&1 || true
+while IFS=: read -r user _ uid _; do
+    ((uid >= 1000)) || continue
+    [[ $user == nobody ]] && continue
+    gpasswd -d "$user" libvirt > /dev/null 2>&1
+    gpasswd -d "$user" libvirt-qemu > /dev/null 2>&1
 done < /etc/passwd
 
-# Remove the network files managed by the install helper.
-rm -f "/etc/libvirt/qemu/networks/default.xml"
-rm -f "/etc/libvirt/qemu/networks/default.xml.bkp"
-
-# Revert broad bridge access rule if the file exists.
-if [ -e /etc/qemu/bridge.conf ]; then
-    sed -i '/allow all/d' /etc/qemu/bridge.conf > /dev/null
+if [[ -e $network.bkp ]]; then
+    mv -f "$network.bkp" "$network"
 fi
 
-# Disable and stop libvirtd only when a unit file is available.
-if [ -e /usr/lib/systemd/system/libvirtd.service ] || [ -e /etc/systemd/system/libvirtd.service ]; then
-    systemctl disable libvirtd.service > /dev/null 2>&1 || true
-    systemctl stop libvirtd.service > /dev/null 2>&1 || true
+if [[ -e /etc/qemu/bridge.conf ]]; then
+    sed -i '/^allow all$/d' /etc/qemu/bridge.conf
+fi
+
+if [[ -e /usr/lib/systemd/system/libvirtd.service ]]; then
+    systemctl disable --now libvirtd.service
 fi

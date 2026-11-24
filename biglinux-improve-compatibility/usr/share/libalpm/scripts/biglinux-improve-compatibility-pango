@@ -1,7 +1,7 @@
 #!/bin/bash
-
-# Create legacy libpangox symlinks for software that still links against the
-# old soname even when only libpangoxft is installed.
+# Pango no longer ships libpangox; programs built against it (old AUR and .deb
+# packages) find libpangoxft under that name instead. Run by
+# biglinux-improve-compatibility-pango.hook after pango or this package changes.
 for source_lib in /usr/lib/libpangoxft-*; do
     [ -e "$source_lib" ] || continue
     compat_lib="${source_lib/libpangoxft/libpangox}"

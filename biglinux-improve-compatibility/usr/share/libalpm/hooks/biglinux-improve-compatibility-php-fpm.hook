@@ -1,10 +1,9 @@
 [Trigger]
 Type = Package
 Operation = Install
-Operation = Upgrade
 Target = php-fpm
 
 [Action]
-Description = Auto configure php-fpm after install
+Description = Enabling the PHP FastCGI process manager (php-fpm.service)
 When = PostTransaction
-Exec = /usr/share/libalpm/scripts/biglinux-improve-compatibility-php-fpm
+Exec = /usr/share/libalpm/scripts/biglinux-improve-compatibility-service enable php-fpm.service

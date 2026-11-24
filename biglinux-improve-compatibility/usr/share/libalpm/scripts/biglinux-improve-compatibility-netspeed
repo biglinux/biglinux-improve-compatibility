@@ -1,0 +1,27 @@
+#!/usr/bin/python3 -I
+"""Declare the package structure the network speed widget's metadata omits.
+
+Plasma 6 lists only applets whose metadata.json names "KPackageStructure":
+"Plasma/Applet"; without it the widget is installed but never offered.
+"""
+
+import json
+import os
+import tempfile
+
+METADATA = "/usr/share/plasma/plasmoids/org.kde.netspeedWidget/metadata.json"
+
+with open(METADATA, encoding="utf-8") as source:
+    metadata = json.load(source)
+
+if metadata.get("KPackageStructure") != "Plasma/Applet":
+    metadata["KPackageStructure"] = "Plasma/Applet"
+    directory = os.path.dirname(METADATA)
+    with tempfile.NamedTemporaryFile(
+        "w", encoding="utf-8", dir=directory, delete_on_close=False
+    ) as target:
+        json.dump(metadata, target, indent=4, ensure_ascii=False)
+        target.write("\n")
+        target.close()
+        os.chmod(target.name, 0o644)
+        os.replace(target.name, METADATA)

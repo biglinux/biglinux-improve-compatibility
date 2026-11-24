@@ -4,6 +4,6 @@ Operation = Remove
 Target = cisco-anyconnect
 
 [Action]
-Description = Auto disable cisco-anyconnect before remove
+Description = Disabling the Cisco AnyConnect VPN agent (vpnagentd.service)
 When = PreTransaction
-Exec = /bin/sh -c '{ [ -e /usr/lib/systemd/system/vpnagentd.service ] || [ -e /etc/systemd/system/vpnagentd.service ]; } && systemctl disable vpnagentd > /dev/null 2>&1'
+Exec = /usr/share/libalpm/scripts/biglinux-improve-compatibility-service disable vpnagentd.service

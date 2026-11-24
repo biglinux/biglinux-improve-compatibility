@@ -1,5 +1,5 @@
 [Unit]
-Description=Run Script to improve compatibility
+Description=Start legacy init scripts and link the running kernel headers
 After=display-manager.service network.target
 DefaultDependencies=no
 

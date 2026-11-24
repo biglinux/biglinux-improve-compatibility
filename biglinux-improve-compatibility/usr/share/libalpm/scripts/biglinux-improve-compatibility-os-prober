@@ -1,0 +1,7 @@
+#!/bin/bash
+# Keeps os-prober from listing Timeshift's btrfs snapshots as other installed
+# systems in the GRUB menu (biglinux-osprober.hook, after os-prober changes). The
+# line it edits lists the subvolumes of a btrfs partition; Timeshift keeps its
+# snapshots under timeshift-btrfs. Once edited the pattern no longer matches.
+
+sed -i 's/subvols=$(btrfs subvolume list "$tmpmnt" | cut -d '"' '"' -f 9)/subvols=$(btrfs subvolume list "$tmpmnt" | cut -d '"' '"' -f 9 | grep -v "timeshift-btrfs")/' /usr/lib/os-probes/50mounted-tests

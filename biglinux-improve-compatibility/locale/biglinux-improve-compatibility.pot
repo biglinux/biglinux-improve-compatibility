@@ -4,21 +4,27 @@
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
 #, fuzzy
-msgid   ""
-msgstr  "Project-Id-Version: biglinux-improve-compatibility\n"
-        "Report-Msgid-Bugs-To: \n"
-        "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-        "Language-Team: LANGUAGE <LL@li.org>\n"
-        "Language: \n"
-        "MIME-Version: 1.0\n"
-        "Content-Type: text/plain; charset=CHARSET\n"
-        "Content-Transfer-Encoding: 8bit\n"
+msgid ""
+msgstr ""
+"Project-Id-Version: biglinux-improve-compatibility\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-24 19:45-0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
 
-msgid   "Necessary to install <b>jre8</b>"
-msgstr  ""
+#: usr/bin/jnlp-check
+msgid "Necessary to install <b>jre8</b>"
+msgstr ""
 
-msgid   "Cancel"
-msgstr  ""
+#: usr/bin/jnlp-check
+msgid "Cancel"
+msgstr ""
 
-msgid   "Install"
-msgstr  ""
+#: usr/bin/jnlp-check
+msgid "Install"
+msgstr ""

@@ -4,6 +4,6 @@ Operation = Remove
 Target = php-fpm
 
 [Action]
-Description = Auto unconfigure php-fpm after remove
+Description = Disabling the PHP FastCGI process manager (php-fpm.service)
 When = PreTransaction
-Exec = /usr/share/libalpm/scripts/biglinux-improve-compatibility-php-fpm-remove
+Exec = /usr/share/libalpm/scripts/biglinux-improve-compatibility-service disable php-fpm.service

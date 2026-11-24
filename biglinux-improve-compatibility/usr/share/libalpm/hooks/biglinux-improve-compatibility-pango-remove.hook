@@ -5,6 +5,6 @@ Target = pango
 Target = biglinux-improve-compatibility
 
 [Action]
-Description = Compatibility improvements to make it easier to use packages compiled through the AUR and converted .deb or .rpm
+Description = Removing the libpangox links
 When = PreTransaction
 Exec = /usr/share/libalpm/scripts/biglinux-improve-compatibility-pango-remove

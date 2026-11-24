@@ -1,16 +1,9 @@
 #!/bin/bash
+# Starts LibreOffice with the settings that work best on the BigLinux desktop,
+# found before /usr/bin/libreoffice in PATH. Variables already exported are kept,
+# except SAL_DISABLE_WATCHDOG.
 
 if [[ $XDG_CURRENT_DESKTOP = "KDE" ]]; then
-
-    # Use gtk3 theme with KDE open/save dialog in KDE
-    # if [[ $XDG_SESSION_DESKTOP == "KDE" ]]; then
-    #     if [[ -z "$SAL_USE_VCLPLUGIN" ]]; then
-    #         export SAL_USE_VCLPLUGIN=gtk3_kde6
-    #         if [[ $XDG_SESSION_TYPE == "wayland" ]]; then
-    #             export SAL_USE_VCLPLUGIN=gtk3 # In 2024-06-05 QT6 is very slow in libreoffice + wayland, maybe back in future with kf6 name
-    #         fi
-    #     fi
-    # fi
 
     if [[ $XDG_SESSION_TYPE = "wayland" ]] && [[ $Vulkan_Supported = "1" ]]; then
         # Temporary fix, force nvidia to use opengl over vulkan with zink

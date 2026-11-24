@@ -1,4 +1,8 @@
 #!/bin/bash
+# On KDE Wayland, a program started again from a terminal or launcher opens in
+# the running instance without its window coming forward. This wrapper, found
+# before /usr/bin in PATH, raises that window with kdotool (optional dependency
+# kdotool-git) and then starts the real program.
 
 if [[ $XDG_SESSION_TYPE == "wayland" ]] && [[ $XDG_SESSION_DESKTOP == "KDE" ]] && type kdotool &> /dev/null ; then
 

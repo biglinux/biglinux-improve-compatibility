@@ -4,6 +4,6 @@ Type = Package
 Target = rtl88x2bu-dkms-git
 
 [Action]
-Description = Disabling module rtw88_8822bu
+Description = Blacklisting the in-kernel rtw88_8822bu driver in favor of rtl88x2bu-dkms
 When = PostTransaction
 Exec = /bin/sh -c "echo 'blacklist rtw88_8822bu' > /etc/modprobe.d/rtw8822bu.conf && { rmmod rtw88_8822bu 2>/dev/null || true; } && { modprobe 88x2bu 2>/dev/null || true; }"

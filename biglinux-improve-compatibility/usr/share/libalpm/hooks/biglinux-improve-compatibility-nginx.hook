@@ -1,10 +1,9 @@
 [Trigger]
 Type = Package
 Operation = Install
-Operation = Upgrade
 Target = nginx
 
 [Action]
-Description = Auto configure nginx after install
+Description = Enabling the nginx web server (nginx.service)
 When = PostTransaction
-Exec = /usr/share/libalpm/scripts/biglinux-improve-compatibility-nginx
+Exec = /usr/share/libalpm/scripts/biglinux-improve-compatibility-service enable nginx.service

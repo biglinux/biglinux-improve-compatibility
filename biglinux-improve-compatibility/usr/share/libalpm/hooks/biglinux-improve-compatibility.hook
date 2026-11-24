@@ -4,13 +4,15 @@ Operation = Install
 Operation = Upgrade
 Target = linux*
 Target = biglinux-improve-compatibility
-Target = hplip
-Target = spectacle
-Target = wxwidgets-gtk3
 Target = dav1d
 Target = rav1e
 
+[Trigger]
+Type = Package
+Operation = Remove
+Target = linux*
+
 [Action]
-Description = Compatibility improvements to make it easier to use packages compiled through the AUR
+Description = Updating kernel header links and compatibility library links
 When = PostTransaction
 Exec = /usr/share/libalpm/scripts/biglinux-improve-compatibility

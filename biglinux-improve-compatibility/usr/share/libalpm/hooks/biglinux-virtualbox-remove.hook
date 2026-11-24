@@ -4,6 +4,6 @@ Type = Package
 Target = virtualbox
 
 [Action]
-Description = Remove VirtualBox and reconfigure.
+Description = Removing the vboxusers group and unloading VirtualBox modules
 When = PostTransaction
-Exec = /bin/sh -c "/usr/share/libalpm/scripts/biglinux-remove-virtualbox"
+Exec = /usr/share/libalpm/scripts/biglinux-remove-virtualbox
