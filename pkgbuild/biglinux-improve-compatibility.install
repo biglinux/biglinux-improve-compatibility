@@ -47,7 +47,10 @@ pre_upgrade() {
 post_upgrade() {
     systemctl enable biglinux-auto-pstate.service || true
     systemctl start biglinux-auto-pstate.service || true
-    systemctl --global enable jamesdsp-autostart.service || true
+    # Versions before this one linked the unit under default.target.
+    if [[ -L /etc/systemd/user/default.target.wants/jamesdsp-autostart.service ]]; then
+        systemctl --global reenable jamesdsp-autostart.service || true
+    fi
     systemctl enable suspend-bluetooth-fix.service || true
     systemctl start suspend-bluetooth-fix.service || true
     systemctl enable glibc2-41-fix.path || true
