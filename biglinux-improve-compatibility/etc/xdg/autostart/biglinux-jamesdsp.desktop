@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=JamesDSP autostart
+Comment=Starts JamesDSP when its autostart option is on
+Exec=systemctl --user start --no-block jamesdsp-autostart.service
+OnlyShowIn=XFCE;X-Cinnamon;GNOME;
+NoDisplay=true
