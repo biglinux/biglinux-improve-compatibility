@@ -4,6 +4,7 @@ Description=Jamesdsp Autostart
 # If jamesdsp is set to start automatically, this file will indeed start.
 Requires=pipewire-pulse.socket
 ConditionUser=!@system
+ConditionPathExists=/usr/bin/jamesdsp
 Wants=pipewire.service pipewire-session-manager.service
 # JamesDSP is a Qt program and aborts without a display, and its tray icon needs
 # the panel. Plasma and BigDesktop start xdg-desktop-autostart.target once both
@@ -34,7 +35,7 @@ Type=simple
 ExecCondition=/bin/sh -c "grep -q 'AutoStartEnabled=true' %h/.config/jamesdsp/application.conf"
 ExecCondition=/bin/sh -c "! test -e %h/.config/autostart/jdsp-gui.desktop"
 
-ExecStart=jamesdsp -t
+ExecStart=/usr/bin/jamesdsp -t
 Restart=on-failure
 RestartSec=3
 Slice=session.slice
